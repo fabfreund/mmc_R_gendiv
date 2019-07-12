@@ -1,5 +1,27 @@
-#' Recursion for expected total length of the Beta-Xi coalescent
-#' POLISHING NOT FINISHED 
+#' Expected total length E(Ln) of Lambda and Beta-Xi n-coalescent.
+#' Computing recursively via M\"ohle '06, Adv. in Appl. Probab., Eq. 2.3
+
+
+#Input: nmax sample size for which to compute E(Ln), ratefun Function of n that
+#gives the transition rates of the Lambda-n-coalescent
+eln_f_lambda <- function(nmax,ratefun){
+eln <- rep(0,nmax)
+rates_l <- sapply(2:nmax,ratefun) #list of Rate vectors for all n used
+eln[2] <- 2/(sum(rates_l[[c(1,2)]])) #E(L_2)=2*E(T2)
+for (i in 3:nmax){
+    rates1 <- rates_l[[i-1]] #entry i-1 contains rate for i blocks 
+    #Compute transition probabilities for a certain jump size
+    #A jump from i to j blocks means coalescing i-j+1 blocks
+    p_i <- rep(0,i-1)
+    for (j in 1:(i-1)){	
+      p_i[j] <- rates1[i-j+1] #rate from i to j
+    }
+    #trans probs = rates/totalrate
+    p_i <- p_i/(sum(rates1))
+    #Recursion
+    eln[i] <- i/(sum(rates1)) + sum(eln[1:(i-1)]*p_i)}  
+  return(eln[nmax])  
+}
 
 #' Main problem: Computing BetaXi rates is costly, and we do this for every
 #' Watterson estimate and simulation. To bypass this, we now compute a table
@@ -17,13 +39,16 @@ for (i in seq(along=alpha_range)){
                            mc.preschedule = FALSE)
 }
 
-#' Recursion for E(Ln), nmax is n until which to recursively compute
-#' Temporarily: alpha_pos is one of the entries of alpha_range
-eln_f_betaxi <- function(nmax,alpha_pos){
+#' Compute E(Ln) for the BetaXi n-coalescent
+#' Input: nmax sample size for which to compute E(Ln), ratefun beta4xi_rates
+#' from script betaxicoal_sim.R as a function of n, e.g. function(n){beta4xi_rates(n,0.5,1.5)}
+#' for BetaXi with params a=0.5,b=1.5
+eln_f_xi <- function(nmax,ratefun){
   eln <- rep(0,nmax)
-  eln[2] <- 2/(sum(rates_l[[c(alpha_pos,1,2)]])) #E(L_2)=2*E(Exp(0.25))
+  rates_l <- sapply(2:nmax,ratefun) #Rate vectors for all n used
+  eln[2] <- 2/(sum(rates_l[[c(1,2)]])) #E(L_2)=2*E(Exp(0.25))
   for (i in 3:nmax){
-    rates1 <- rates_l[[c(alpha_pos,i-1)]] 
+    rates1 <- rates_l[[i-1]] 
     #Compute transition probabilities for a certain jump size
     #e.g.: A collision of k1,k2 blocks leads to the state n-sum(k)+2 (2 new 
     #blocks...)

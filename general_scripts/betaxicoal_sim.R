@@ -117,7 +117,9 @@ Xi_seq_sim <- function(conf1,theta,ratef){
                           blocks <- unique(conf1[i,]) #Blocks present at jump
                           n1 <- length(blocks) #number of blocks
                           tot_rate <- totratef(n1) #total rate with n1 blocks
-                          mut1 <- rgeom(n1,tot_rate/(tot_rate+theta)) #number mut's is geometric
+                          #mut1 <- rgeom(n1,tot_rate/(tot_rate+theta)) #number mut's is geometric
+                          wt <- rexp(1,tot_rate)
+                          mut1 <- rpois(n1,theta*wt)
                           for (j in 1:n1){
                             if (mut1[j]>0){
                             temp <- rep(0,n)

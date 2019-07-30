@@ -41,7 +41,6 @@ Lambda_seq_sim <- function(conf1,theta,totratef){
     blocks <- unique(conf1[i,]) #Blocks present at jump
     n1 <- length(blocks) #number of blocks
     tot_rate <- totratef(n1) #total rate with n1 blocks
-    #mut1 <- rgeom(n1,tot_rate/(tot_rate+theta)) #number mut's is geometric
     wt <- rexp(1,tot_rate)
     mut1 <- rpois(n1,theta*wt)
     for (j in 1:n1){
@@ -72,7 +71,7 @@ return(c(0,x))}
 #Total rate function
 bsz_bc_rate <- function(n){n-1}
 
-#Rates Beta(a,b)-n-coalescent. n=sample size
+#Rates block counting of Beta(a,b)-n-coalescent. n=sample size
 beta_bc_rates <-function(n,a,b){x<-rep(0,n)
 for (k in 2:n) {x[k]<-choose(n,k)*beta(a+k-2,n-k+b)/beta(a,b)}
 return(x)}
@@ -82,7 +81,7 @@ return(x/sum(x))}
 #Total rate function
 beta_bc_rate<- function(n,a,b){sum(beta_bc_rates(n,a,b))}
 
-#Rates Dirac-n-coalescent, Lambda point mass in p. n=sample size 
+#Rates block counting of Dirac-n-coalescent, Lambda point mass in p. n=sample size 
 dirac_bc_rates <-function(n,p){x<-rep(0,n)
 for (k in 2:n) {x[k]<-choose(n,k)*p^(k-2)*(1-p)^(n-k)}
 return(x)}
@@ -123,9 +122,10 @@ bszplus1_seq_sim0 <- function(conf1,theta,totratef){
     blocks <- unique(conf1[i,]) #Blocks present at jump
     n1 <- length(blocks) #number of blocks
     tot_rate <- totratef(n1) #total rate with n1 blocks
-    mut1 <- rgeom(n1,tot_rate/(tot_rate+theta)) #number mut's is geometric
-    if (i == 1){mut1 <- mut1 + rpois(n1,theta)} #Number of mut's on the 
-    #+1 branch part is Poisson
+    wt <- rexp(1,tot_rate)
+    mut1 <- rpois(n1,theta*wt)
+    if (i == 1){mut1 <- mut1 + rpois(n1,theta)} #Numbers of mut's on the 
+    #+1 branch parts are independent Poissonians
     for (j in 1:n1){
       if (mut1[j]>0){
         temp <- rep(0,n)
@@ -135,7 +135,7 @@ bszplus1_seq_sim0 <- function(conf1,theta,totratef){
     }
   }                 
   return(seq1)}
-#Wrapper for producing sample of n-sequences under the model given n, theta
+#Wrapper for producing sample of n-sequences under the model BSZ+1 given n, theta
 bszplus1_seq_sim <- function(n,theta){
   bszplus1_seq_sim0(Lambda_jc_sim(n,bsz_bc_transprob),theta,
                     bsz_bc_rate)} 

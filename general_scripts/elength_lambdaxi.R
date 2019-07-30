@@ -26,21 +26,7 @@ for (i in 3:nmax){
   return(eln[nmax])  
 }
 
-#' Main problem: Computing BetaXi rates is costly, and we do this for every
-#' Watterson estimate and simulation. To bypass this, we now compute a table
-#' for the rates and then use the table instead of calling the function anew
-library(parallel)
-source("betaxicoal_sim.R")
-mc1 <- 3
-n_start <- as.numeric(args[2])
-alpha_range <- seq(1,1.9,0.1)
-rates_l <- vector("list",length(alpha_range))
-for (i in seq(along=alpha_range)){
-  b1 <- alpha_range[i] #alpha
-  a1 <- 2 - b1 #2-alpha  
-  rates_l[[i]] <- mclapply(2:n_start,beta4xi_rates,a=a1,b=b1,mc.cores = mc1,
-                           mc.preschedule = FALSE)
-}
+
 
 #' Compute E(Ln) for the BetaXi n-coalescent
 #' Input: nmax sample size for which to compute E(Ln), ratefun beta4xi_rates

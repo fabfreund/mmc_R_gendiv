@@ -93,5 +93,61 @@ S <- sum(sfs)
 names(S) <- "S"
 return(c(pi,S))}  
 
+#' Output of r^2 as LD measure between pairs of SNPs
+r2fun <- function(seq1,quant_v = c(.1,.3,.5,.7,.9)){
+  cor1 <- cor(seq1)
+  cor1 <- cor1[lower.tri(seq1)]
+  r2 <- cor1^2
+  return(c(r2=quantile(r2,quant_v,na.rm = TRUE)))
+}
+
+#' Internal function that computes the minimal observable clade size of the sequence
+#' represented by row i
+OCi <- function(i,seq1){
+  targetseq <- seq1[i,]
+  mut_pos <- which(targetseq==1) #All mutations of seq. i
+  if (length(mut_pos)<1){return(nrow(seq1))} else {
+    seq2 <- seq1[,mut_pos] #seq2 shows only mutation pos. of seq. i
+    if (length(mut_pos)==1){return(sum(seq2))} else {
+      return(min(colSums(seq2)))} #How many seqs have all these muts?
+  }}
+
+
+#' Output: Vector of all minimal observable clade sizes (of row 1,...,n)
+vect_OCi <- function(seq1){if (!all(is.na(seq1))){
+  if (!(is.matrix(seq1))){as.matrix(seq1)}  
+  log1 <- (colSums(seq1)>1)
+  if (sum(log1)==0){out1 <- rep(nrow(seq1),nrow(seq1))} else {
+    seq1 <- seq1[,log1] #Remove all private mutations
+    if (sum(log1)==1){seq1 <- as.matrix(seq1)}
+    out1 <- sapply(1:nrow(seq1),OCi,seq1)}} else {out1 <- rep(n,n)}
+  return(out1)}
+
+#' Output: Harmonic mean and quantiles 'quant_v' of minimal observable clade sizes
+#' uses 'psych' package for harmonic mean
+require(psych)
+quant_hm_oc <- function(seq1,quant_v = c(.1,.3,.5,.7,.9)){
+  oc_vals <- vect_OCi(seq1)
+  out1 <- c(harmonic.mean(oc_vals),quantile(oc_vals,quant_v))
+  names(out1) <- c("oc_hm",paste0("oc_",quant_v))
+  return(out1)
+} 
+
+#' Output: Sample mean and standard deviation of minimal observable clade sizes
+mean_sd_oc <- function(seq1){
+  oc_vals <- vect_OCi(seq1)
+  out1 <- c(mean(oc_vals),sd(oc_vals))
+  names(out1) <- c("oc_mean","oc_sd")
+  return(out1)
+} 
+
+#' Output: Quantiles 'quant_v' of scaled observable minimal clade sizes O(i)/max_i(O(i))
+quant_oc_sc <- function(seq1,quant_v = c(.1,.3,.5,.7,.9)){
+  oc_vals <- vect_OCi(seq1)
+  oc_vals <- oc_vals/max(oc_vals)
+  out1 <- c(quantile(oc_vals,quant_v))
+  names(out1) <- c(paste0("oc_sc_",quant_v))
+  return(out1)
+} 
 
 

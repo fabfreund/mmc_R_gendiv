@@ -11,6 +11,7 @@ source("divfunwrappers.R")
 
 #' Wrapper for the different simulation scripts
 #' We use ms to simulate Kingman and related coalescents
+#' Keep in mind that the exponential growth rate in ms is given on a scale of 4N generations
 
 library(phyclust) #R implementation of Hudson's ms
 library(gap) #Read in output of ms

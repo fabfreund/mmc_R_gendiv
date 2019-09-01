@@ -2,13 +2,14 @@ Currently: The folder contains sample code needed to replicate our analysis from
 THIS IS UNDER CONSTRUCTION. 
 
 The general approach is to first run one or multiple of the sim_.. scripts, then run abcrf_xfold_2rep.R with a parameter script. 
-Simulation output (with one replication) is written into the folders sims_rep1/ and sims_rep2/. ABC results are written into folder abc_res. 
+Simulation output (with one replication) is written into the folders sims_rep1/ and sims_rep2/. ABC results are written into folder abc_res.  
 Then, the ABC results can be plotted or summarised with additional scripts, see below.
 
 Further documentation can also be found within the R scripts.
 
 
 IMPORTANT: 
+* Before running simulations and ABC model selections scripts, make new folders sims_rep1/, sims_rep2/ and/or abc_res within this folder
 * Each simulation script comes with a specific set of diversity stats simulated, please adjust the sets of statistics to your needs.
 * The ABC script abcrf_xfold_2rep.R performs 10 ABC runs on each replication for each of several subsets of statistics, which are specified in an input parameter script.
   Best have a look at one of the example scripts.

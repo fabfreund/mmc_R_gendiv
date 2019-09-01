@@ -34,10 +34,11 @@ oob_compare2 <-rbind(set2_rep1=apply(oob1,2,mean),
                      set2_rep2=apply(oob2,2,mean))
 return(list(oob_compare1,oob_compare2))}
 
-
-str1 <-"m12_smear2_n100"
-str2 <- "m12_af_TB"
-oob_cf(str1,str2)
+#' Example (not run, and only works if simulations and ABC was run before...)
+#' Important: the full ABC results are e.g. named as modsel_rep2_m12_sfsl_n100.RData, the function only needs the middle part  
+#' str1 <-"m12_fold_n100" 
+#' str2 <- "m12_sfsl_n100"
+#' oob_cf(str1,str2)
 
 
 

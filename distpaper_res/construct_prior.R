@@ -24,7 +24,7 @@ if (3 %in% models){
 theta[[3]] <- sapply(ranges[[3]],function(p){2*s_obs/eln_f_lambda(n_ind,function(n){dirac_bc_rates(n,p)})})}   
 
 if (4 %in% models){
-  theta[[3]] <- sapply(ranges[[3]],function(a){2*s_obs/eln_f_xi(n_ind,function(n){beta4xi_rates(n,2-a,a)})})}   
+  theta[[4]] <- sapply(ranges[[4]],function(a){2*s_obs/eln_f_xi(n_ind,function(n){beta4xi_rates(n,2-a,a)})})}   
 
 if (6 %in% models){
 theta[[6]] <- sapply(ranges[[6]],function(a){s_obs/sum((1:(n_ind-1))^(-1))})} #KM RULEZ

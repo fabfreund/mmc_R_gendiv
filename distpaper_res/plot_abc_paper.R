@@ -1,5 +1,5 @@
 #args <- c("m24_af_n100c",2,4)
-args <- c("m12_af_TB",1,2)
+args <- c("m12_fold_n100",1,2)
 
 
 load(paste0("abc_res/modsel_rep1_",args[1],".RData"))
@@ -93,20 +93,21 @@ var_imps2[[i]] <- sapply(res_imp1,function(v){v[i]})
 }
 
 #Adjust variable importance scored variables here
-varnames2 <- list(c("O: hm",paste("O:",quantnames),"O: mean","O: sd"),
+varnames2 <- list(#c("O: hm",paste("O:",quantnames),"O: mean","O: sd"),
                   #c("O: hm",paste("O:",quantnames_fine),"O: mean","O: sd"),
                   #paste("nO:",quantnames),
                   #paste("nHam:",quantnames),
                   paste("Ham:",quantnames),
                   #paste0("S",1:14,"/S"),"S15+/S"
                   #paste("PHY:",quantnames),
-                  paste("Phy:",quantnames),
+                  paste("Phy:",quantnames)[-(1:3)],
                   paste("r2:",quantnames),
                   c("nucl. div","S"),
-                  #paste0("S",1:14),"S15+",
-                  paste("AF:",quantnames)
+                  "Tajima's D",#"Fay & Wu's H",
+                  #paste0("S",1:14),"S15+"
+                  paste0("fS",1:50)
+                  #paste("AF:",quantnames)
                   #paste("AF:",quantnames_fine),
-                  #"Tajima's D", "Fay & Wu's H"
                   )
 
 #pdf(paste0("pdfs/varimp_corr_",args[1],".pdf"))

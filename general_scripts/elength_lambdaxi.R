@@ -37,7 +37,7 @@ for (i in 3:nmax){
 
 eln_f_xi <- function(nmax,ratefun,s=0){
   eln <- rep(0,nmax)
-  rates_l <- sapply(2:nmax,ratefun) #Rate vectors for all n used
+  rates_l <- lapply(2:nmax,ratefun) #Rate vectors for all n used
   eln[2] <- 2/(sum(rates_l[[c(1,2)]])) #E(L_2)=2*E(Exp(0.25))
   for (i in 3:nmax){
     rates1 <- rates_l[[i-1]] 

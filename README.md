@@ -7,6 +7,6 @@ R scripts to simulate genetic diversity under multiple merger (and other) coales
 
 Code by F. Freund ([U. Hohenheim](http://evoplant.uni-hohenheim.de/people/freund/)) and A. Siri-Jégousse ([IIMAS, UNAM Mexico City](http://sigma.iimas.unam.mx/arno/))
 
-The repository includes sample code we used for our manuscript "Distinguishing coalescent models - which statistics matter most?", availabe on biorxiv <https://www.biorxiv.org/content/10.1101/679498v1>
+The repository includes sample code we used for our manuscript "Distinguishing coalescent models - which statistics matter most?", availabe on biorxiv <https://www.biorxiv.org/content/10.1101/679498v1>. See folder distpaper_res.
 
 We thank [Bjarki Eldon (Museum für Naturkunde, Berlin)](http://page.math.tu-berlin.de/~eldon/index.html) for allowing us to share his code here for computing the expected branch lengths for Kingman's n-coalescent with exponential growth (see README in folder general_scripts). 

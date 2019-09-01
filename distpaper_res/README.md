@@ -26,6 +26,6 @@ File description
    * scenario2_fold.R: Using fSFS and further summary statistics that don't need polarized data
    * scenario3.R: ABC for Scenario 3 from the paper
    * kato_rep.R: ABC for Scenario 1
-* plot_abc_paper.R: Plots as in our preprint from output of abcrf_xfold_2rep.R
+* plot_abc_paper.R: Plots as in our preprint from output of abcrf_xfold_2rep.R. **Needs to be adjusted by hand to match your output** 
 * oob.R: Summarises OOB errors of ABC analyses with abcrf_xfold_2rep.R. Currently simultaneously for two ABC analyses (or twice the same...)
 * mA_abcrfvsmBC.R: Takes simulations from at least 3 model classes as input. Takes simulations from one model class and performs an ABC model selection for these simulations between the other models. 

@@ -10,5 +10,5 @@
   Measure in Classification Trees, J. Comp. Graphic. Stat. 17, 2008 and a binomial perturbation around a real number 
   on log equidistant steps (whic we use for prior construction for the scaled mutation rate theta around Watterson's estimator)
  *  divstats.R: Includes various diversity statistics computed from zero-one SNP matrices
- * ext_funs.R: Includes code not programmed by us, see the script for details (one function is sourced from another repository 
+ * ext_funs.R: Includes code not programmed by us, **see the script for details** (one function is sourced from another repository 
    https://github.com/sdwfrost/popseq, the other needs a compiled version of CREBiepg.c)

@@ -1,4 +1,4 @@
-#args <- c("m24_af_n100c",2,4)
+#' ABC output is e.g. named modsel_rep2_m12_fold_n100.RData - only take the middle part. This needs to be adjusted 
 args <- c("m12_fold_n100",1,2)
 
 
@@ -18,7 +18,6 @@ if (!namebool){
   args[1] <- readline("Enter new name: ")}  
 
 
-#names(res_conf)
 models1 <- NULL
 args_num <- as.numeric(args[-1])
 for (i in args_num){models1 <- c(models1,switch(i,"K+exp","B","D","Xi-B","D + exp.","K",
@@ -26,6 +25,7 @@ for (i in args_num){models1 <- c(models1,switch(i,"K+exp","B","D","Xi-B","D + ex
 
 names0 <- names(res_conf)
 
+# Check which variables were used, adjust l. 96++ below accordingly
 print(sapply(res_imp,length))
 print(sapply(res_imp1,length))
 print(names(res_imp[[1]]))

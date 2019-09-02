@@ -1,5 +1,5 @@
 source("../general_scripts/divstats.R")
-source("../general_scripts/ext_funs.R")
+source("../general_scripts/ext_fun_TajD_FWH.R")
 
 divfun_af <- function(seq1){
   if (is.matrix(seq1)){

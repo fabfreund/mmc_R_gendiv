@@ -18,7 +18,7 @@ IMPORTANT:
 File description
 * construct_prior.R: Wrapper script to produce priors for model selection between classes of Lambda- and Xi-coalescents 
 * divfunwrappers.R: Wrapper script to jointly compute different diversity statistics 
-* sim_m12_all_n*.R: Simulate (many) diversity statistics under Kingman's n-coalescent with exponential growth and under Beta-n-coalescents from prior distributions (Scenario 2 from the paper, n=*) 
+* sim_m12_all_n*.R, sim_m12_all.R: Simulate (many) diversity statistics under Kingman's n-coalescent with exponential growth and under Beta-n-coalescents from prior distributions (Scenario 2 from the paper, n=*). 
 * sim_m3_af_n100.R: Simulate diversity statistics under Dirac n-coalescents from prior distribution (Scenario 2, n=100)
 * sim_m12_TB_n100.R: Simulate diversity statistics under Kingman's n-coalescent with exponential growth and under Beta-n-coalescents from prior distributions (Scenario 3 from the paper)
 * sim_scenario1.R: Simulate diversity statistics in Scenario 1 (replication of Kato et al., Royal Society Open Science, 2017)

@@ -4,7 +4,7 @@ set.seed(87598) #Seed 5
 #' Source scripts
 source("../general_scripts/lambdacoal_sim.R")
 source("../general_scripts/elength_lambdaxi.R")
-source("../general_scripts/ext_funs.R")
+source("../general_scripts/ext_fun_CREB.R")
 source("../general_scripts/divstats.R")
 source("construct_prior.R")
 source("divfunwrappers.R")

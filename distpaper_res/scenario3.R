@@ -3,20 +3,22 @@ dataname <- "m12_af_TB"
 seed1 <- 57285 #Seed 7
 
 #' Rows that are kept for each set of statistics used for model selection
-rows_abc <- list(1:30,-(14:23),-(9:23),-(19:23),-(14:18),-(9:13),-(1:8))
+rows_abc <- list(1:30,-(14:23),-(9:23),-(19:23),-(14:18),-(9:13),-(1:8),
+                 c(1:8,19:30))
 
 
 
 #' Input vector
-stats1 <- vector("list",7)
+stats1 <- vector("list",8)
 
 #' Names of sets of stats
-names(stats1) <- c("FULL","O, Ham, AF+","O, AF+","FULL - r2","FULL - PHY","FULL - Ham","FULL - O")
+names(stats1) <- c("FULL","O, Ham, AF+","O, AF+","FULL - r2","FULL - PHY","FULL - Ham","FULL - O",
+                   "O, r2, AF+")
 
 
 #' How many ABC runs per set of stats per replication
 nreps <- 10
 #'Output objects: oob errors and varuiable importances
-res_conf <- vector("list",7)
+res_conf <- vector("list",8)
 names(res_conf) <- names(stats1)
 res_imp <- vector("list",nreps)

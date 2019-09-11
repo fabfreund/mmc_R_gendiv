@@ -4,7 +4,6 @@ set.seed(44986) #Seed 10
 #' Source scripts
 source("../general_scripts/lambdacoal_sim.R")
 source("../general_scripts/elength_lambdaxi.R")
-source("../general_scripts/ext_funs.R")
 source("../general_scripts/divstats.R")
 source("construct_prior.R")
 source("divfunwrappers.R")
@@ -39,7 +38,7 @@ sim_seq <- function(nsamp1,theta1,coal_param=0,model=1){
 
 #' Number of clusters
 
-mc1 <- 7#16
+mc1 <- 16
 
 #' We produce an additional replication of simulations 
 #' Number of simulations per model class

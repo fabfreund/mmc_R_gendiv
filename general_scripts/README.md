@@ -1,4 +1,4 @@
-* CREBiepg.c and its R wrapper within ext_funs.R: Copyright (2014):  Bjarki Eldon, distributed under GNU GPL v3 or later
+* CREBiepg.c and its R wrapper within ext_fun_CREB.R: Copyright (2014):  Bjarki Eldon, distributed under GNU GPL v3 or later. Computes expected branch lengths under Kingman's n-coalescent with exponential growth. needs a compiled version of CREBiepg.c, see documentation within ext_fun_CREB.R.  
 * lambdacoal_sim.R, betaxicoal_sim.R: Coalescent simulators for Lambda- and Xi-n-coalescents. So far, only Beta, Dirac and 
   BetaXi n-coalescents are explicitly supported. However, if you provide the function of transition rates in the form 
   as for the supported ones, other n-coalescents can be easily added 
@@ -10,5 +10,5 @@
   Measure in Classification Trees, J. Comp. Graphic. Stat. 17, 2008 and a binomial perturbation around a real number 
   on log equidistant steps (whic we use for prior construction for the scaled mutation rate theta around Watterson's estimator)
  *  divstats.R: Includes various diversity statistics computed from zero-one SNP matrices
- * ext_funs.R: Includes code not programmed by us, **see within the R script itself for details** (one function is sourced from another repository 
-   https://github.com/sdwfrost/popseq, the other needs a compiled version of CREBiepg.c)
+ * ext_fun_TajD_FWH: Includes code not programmed by us to compute Tajima's D and Fay and Wu's H. It is sourced from another repository 
+   https://github.com/sdwfrost/popseq, thus needs an internet connection.

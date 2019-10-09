@@ -73,7 +73,8 @@ bsz_bc_rate <- function(n){n-1}
 
 #Rates block counting of Beta(a,b)-n-coalescent. n=sample size
 beta_bc_rates <-function(n,a,b){x<-rep(0,n)
-for (k in 2:n) {x[k]<-choose(n,k)*beta(a+k-2,n-k+b)/beta(a,b)}
+if (a==0 & b==2){x[2] <- choose(n,2)} else {
+  for (k in 2:n) {x[k]<-choose(n,k)*beta(a+k-2,n-k+b)/beta(a,b)}}
 return(x)}
 #Transition probabilities 
 beta_bc_transprob <- function(n,a,b){x<-beta_bc_rates(n,a,b)

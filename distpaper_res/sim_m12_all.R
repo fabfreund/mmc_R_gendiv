@@ -63,7 +63,7 @@ setwd("../distpaper_res/")
 clu1 <- makeForkCluster(nnodes = mc1)
 
 sims1 <- parApply(clu1,prior1,1,function(x){
-  divfun_most(sim_seq(nsamp1 = x[1],theta1 = x[5],coal_param = x[3],model = x[2]),25)})
+  divfun_most(sim_seq(nsamp1 = x[1],theta1 = x[5],coal_param = x[3],model = x[2]),x[1])})
 
 stopCluster(clu1)
 

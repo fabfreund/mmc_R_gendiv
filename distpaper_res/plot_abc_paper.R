@@ -1,5 +1,5 @@
 #' ABC output is e.g. named modsel_rep2_m12_fold_n100.RData - only take the middle part. This needs to be adjusted 
-args <- c("m12_fold_n100",1,2)
+args <- c("m1235_af_n100",1,2,3,5)
 
 
 load(paste0("abc_res/modsel_rep1_",args[1],".RData"))
@@ -47,7 +47,8 @@ names1[k] <- readline("Enter new name: ")}
 if (length(models1)<3 & length(names1)<7){width1 <- 12} else {width1 <- 20}
 
 #pdf(paste0("pdfs/miscl_",args[1],".pdf"))
-pdf(paste0("pdfs/miscl_",args[1],".pdf"),height=switch(as.character(length(models1)),"2"=12,"3"=20),
+pdf(paste0("pdfs/miscl_",args[1],".pdf"),height=switch(as.character(length(models1)),"2"=12,"3"=20,
+                                                       "4"=20),
                                           width=width1)
 par(oma=c(1,0,0,0),mfrow=switch(length(models1),c(1,1),c(1,2),c(2,2),c(2,2),c(3,2),c(3,2)),cex=let1)
 ylab1 <- paste("% Misclassification for",models1)
@@ -93,20 +94,20 @@ var_imps2[[i]] <- sapply(res_imp1,function(v){v[i]})
 }
 
 #Adjust variable importance scored variables here
-varnames2 <- list(#c("O: hm",paste("O:",quantnames),"O: mean","O: sd"),
+varnames2 <- list(c("O: hm",paste("O:",quantnames),"O: mean","O: sd"),
                   #c("O: hm",paste("O:",quantnames_fine),"O: mean","O: sd"),
                   #paste("nO:",quantnames),
                   #paste("nHam:",quantnames),
                   paste("Ham:",quantnames),
                   #paste0("S",1:14,"/S"),"S15+/S"
                   #paste("PHY:",quantnames),
-                  paste("Phy:",quantnames)[-(1:3)],
+                  paste("Phy:",quantnames)[-(1:2)],
                   paste("r2:",quantnames),
                   c("nucl. div","S"),
-                  "Tajima's D",#"Fay & Wu's H",
+                  #"Tajima's D",#"Fay & Wu's H",
                   #paste0("S",1:14),"S15+"
-                  paste0("fS",1:50)
-                  #paste("AF:",quantnames)
+                  #paste0("fS",1:50)
+                  paste("AF:",quantnames)
                   #paste("AF:",quantnames_fine),
                   )
 

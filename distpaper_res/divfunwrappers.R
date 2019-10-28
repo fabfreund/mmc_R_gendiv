@@ -35,16 +35,17 @@ divfun_most <- function(seq1,n_ind){
   divfun_no_s <- function(seq1){
     if (is.matrix(seq1)){
       log1 <- (colSums(seq1)>1)
-      if (sum(log1)==0){out1 <- rep(NA,20)} else {
+      if (sum(log1)==0){out1 <- rep(NA,25)} else {
         seq1 <- as.matrix(seq1[,log1])
         out1 <- c(quant_hm_oc(seq1),mean_sd_oc(seq1),
-                  hammfun(seq1),
-                  f_nucdiv_S(spectrum_fab(seq1)),allele_freqs(seq1))}}
-    else {out1 <- rep(NA,20)}
-    names(out1) <-c("oc_hm","oc_0.1","oc_0.3","oc_0.5","oc_0.7","oc_0.9","oc_mean", "oc_sd",
-                    "hammd_qu0.1","hammd_qu0.3","hammd_qu0.5","hammd_qu0.7","hammd_qu0.9", 
-                    "nucdiv","S","AF_qu0.1","AF_qu0.3",
-                    "AF_qu0.5","AF_qu0.7","AF_qu0.9")
+                   hammfun(seq1),r2fun(seq1),
+                   f_nucdiv_S(spectrum01(seq1)),allele_freqs(seq1))}}
+    else {out1 <- rep(NA,25)}
+    names(out1) <-c("hm(O)",paste("O: qu",seq(.1,.9,.2)),"mean(O)","sd(O)",
+                    paste("Ham: qu",seq(.1,.9,.2)),
+                    paste("r2: qu",seq(.1,.9,.2)),
+                    "Nucl. div.","S",
+                    paste("AF: qu",seq(.1,.9,.2)))
     return(out1)}
   
   divfun_robust <- function(seq1,n_ind){

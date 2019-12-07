@@ -32,6 +32,7 @@ sims_mtest <- sims1[,prior_mtest]
 model_mtest <- droplevels(model1[prior_mtest])
 stats_mtest <- data.frame(model_mtest,t(sims_mtest))
 
+rm(prior1,sims1)
 
 #' Kill stats that have no variation 
 posvar_rvs <- 1+which(apply(stats_m_rf[,-1],2,sd)>0)

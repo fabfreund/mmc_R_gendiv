@@ -1,3 +1,7 @@
+setwd("../")
+
+
+
 set.seed(53373) #Seed 11
 
 

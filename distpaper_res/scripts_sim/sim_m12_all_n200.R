@@ -1,4 +1,7 @@
-set.seed(88449) #Seed 4
+setwd("../")
+
+
+set.seed(14884) #Seed 2
 
 
 #' Source scripts
@@ -46,15 +49,12 @@ mc1 <- 16
 #' Number of simulations per model class
 nsim <- 175000
 
-#' Sample size n
-nsamp <- 25
-
 for (i in 1:2){
 
 #' Switch folders since Watterson estimator for exponential growth is computed via C script that needs
 #' to be called in the right directory
 setwd("../general_scripts/")
-prior1 <- prior_obs_s(nsamp,models=c(1,2),nsimul=c(nsim,nsim,0,0,0,0),
+prior1 <- prior_obs_s(200,models=c(1,2),nsimul=c(nsim,nsim,0,0,0,0),
               ranges = list(c(0,0.5,1,2.5,4,7,10,25,50,75,100,500,1000),
                             seq(1,1.9,0.1),NULL,NULL,NULL,0),
               s_obs = c(15,20,30,40,60,75))
@@ -63,10 +63,9 @@ setwd("../distpaper_res/")
 clu1 <- makeForkCluster(nnodes = mc1)
 
 sims1 <- parApply(clu1,prior1,1,function(x){
-  divfun_most(sim_seq(nsamp1 = x[1],theta1 = x[5],coal_param = x[3],model = x[2]),25)})
+  divfun_most(sim_seq(nsamp1 = x[1],theta1 = x[5],coal_param = x[3],model = x[2]),200)})
 
 stopCluster(clu1)
 
-save(prior1,sims1,file=paste0("sims_rep",i,"/sim_m12_all_n",
-                              nsamp,".RData"))
+save(prior1,sims1,file=paste0("sims_rep",i,"/sim_m12_all_n200.RData"))
 }

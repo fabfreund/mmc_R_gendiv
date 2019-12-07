@@ -1,7 +1,6 @@
 # mmc_R_gendiv
 
-
-STILL HEAVILY UNDER CONSTRUCTION. IF YOU FIND ERRORS OR HAVE WISHES, PLEASE CONTACT US 
+IN BETA TESTING - COMMENTS VERY WELCOME! 
 
 R scripts to simulate genetic diversity under multiple merger (and other) coalescents and perform ABC inference of the genealogy model based on SNP data 
 

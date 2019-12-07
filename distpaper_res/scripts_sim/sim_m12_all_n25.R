@@ -1,4 +1,6 @@
-set.seed(14884) #Seed 2
+setwd("../")
+
+set.seed(88449) #Seed 4
 
 
 #' Source scripts
@@ -12,7 +14,6 @@ source("divfunwrappers.R")
 
 #' Wrapper for the different simulation scripts
 #' We use ms to simulate Kingman and related coalescents
-#' Keep in mind that the exponential growth rate in ms is given on a scale of 4N generations
 
 library(phyclust) #R implementation of Hudson's ms
 library(gap) #Read in output of ms
@@ -52,7 +53,7 @@ for (i in 1:2){
 #' Switch folders since Watterson estimator for exponential growth is computed via C script that needs
 #' to be called in the right directory
 setwd("../general_scripts/")
-prior1 <- prior_obs_s(100,models=c(1,2),nsimul=c(nsim,nsim,0,0,0,0),
+prior1 <- prior_obs_s(25,models=c(1,2),nsimul=c(nsim,nsim,0,0,0,0),
               ranges = list(c(0,0.5,1,2.5,4,7,10,25,50,75,100,500,1000),
                             seq(1,1.9,0.1),NULL,NULL,NULL,0),
               s_obs = c(15,20,30,40,60,75))
@@ -61,9 +62,9 @@ setwd("../distpaper_res/")
 clu1 <- makeForkCluster(nnodes = mc1)
 
 sims1 <- parApply(clu1,prior1,1,function(x){
-  divfun_most(sim_seq(nsamp1 = x[1],theta1 = x[5],coal_param = x[3],model = x[2]),100)})
+  divfun_most(sim_seq(nsamp1 = x[1],theta1 = x[5],coal_param = x[3],model = x[2]),25)})
 
 stopCluster(clu1)
 
-save(prior1,sims1,file=paste0("sims_rep",i,"/sim_m12_all_n100.RData"))
+save(prior1,sims1,file=paste0("sims_rep",i,"/sim_m12_all_n25.RData"))
 }

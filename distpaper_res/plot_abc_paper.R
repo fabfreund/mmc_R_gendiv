@@ -1,5 +1,5 @@
 #' ABC output is e.g. named modsel_rep2_m12_fold_n100.RData - only take the middle part. This needs to be adjusted 
-args <- c("m1235_af_n100",1,2,3,5)
+args <- c("m12_all_n25sfs",1,2)
 
 
 load(paste0("abc_res/modsel_rep1_",args[1],".RData"))
@@ -44,8 +44,8 @@ if (!namebool){
 names1[k] <- readline("Enter new name: ")}  
 }
 
-if (length(models1)<3 & length(names1)<7){width1 <- 12} else {width1 <- 20}
-
+#if (length(models1)<3 & length(names1)<7){width1 <- 12} else {width1 <- 20}
+width1 <- 20
 #pdf(paste0("pdfs/miscl_",args[1],".pdf"))
 pdf(paste0("pdfs/miscl_",args[1],".pdf"),height=switch(as.character(length(models1)),"2"=12,"3"=20,
                                                        "4"=20),
@@ -98,17 +98,22 @@ varnames2 <- list(c("O: hm",paste("O:",quantnames),"O: mean","O: sd"),
                   #c("O: hm",paste("O:",quantnames_fine),"O: mean","O: sd"),
                   #paste("nO:",quantnames),
                   #paste("nHam:",quantnames),
-                  paste("Ham:",quantnames),
+                  #paste("Ham:",quantnames),
+                  #paste("Ham:",quantnames_fine),
                   #paste0("S",1:14,"/S"),"S15+/S"
                   #paste("PHY:",quantnames),
-                  paste("Phy:",quantnames)[-(1:2)],
+                  #paste("Phy:",quantnames)[-1],#[-(1:3)],
+                  #paste("Phy:",quantnames_fine)[6:9],
                   paste("r2:",quantnames),
-                  c("nucl. div","S"),
-                  #"Tajima's D",#"Fay & Wu's H",
-                  #paste0("S",1:14),"S15+"
+                  #paste("r2:",quantnames_fine),
+                  #c("nucl. div","S"),
+                  #"Tajima's D","Fay & Wu's H",
+                  paste0("S",1:14),"S15+"
+                  #paste0("S",1:99)
                   #paste0("fS",1:50)
-                  paste("AF:",quantnames)
-                  #paste("AF:",quantnames_fine),
+                  #paste("AF:",quantnames)#,
+                  #"LD1"
+                  #paste("AF:",quantnames_fine)
                   )
 
 #pdf(paste0("pdfs/varimp_corr_",args[1],".pdf"))

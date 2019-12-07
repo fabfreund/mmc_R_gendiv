@@ -52,7 +52,7 @@ divfun_most <- function(seq1,n_ind){
     if (is.matrix(seq1)){
       out1 <- c(quant_oc_sc(seq1),
                 hammfun_sc(seq1),
-                fnl_sfs(spectrum_fab(seq1),FALSE,TRUE,TRUE,15))
+                fnl_sfs(spectrum01(seq1),FALSE,TRUE,TRUE,15))
     } else {out1 <- rep(NA,25)}
     names(out1) <-c("oc_sc_.1","oc_sc_.3","oc_sc_.5","oc_sc_.7","oc_sc_.9",
                     "ham_sc_.1","ham_sc_.3","ham_sc_.5","ham_sc_.7","ham_sc_.9", 

@@ -1,11 +1,10 @@
-set.seed(88449) #Seed 4
+setwd("../")
 
 
+set.seed(30591) #Seed 1
 #' Source scripts
 source("../general_scripts/lambdacoal_sim.R")
 source("../general_scripts/elength_lambdaxi.R")
-source("../general_scripts/ext_fun_CREB.R")
-source("../general_scripts/ext_fun_TajD_FWH.R")
 source("../general_scripts/divstats.R")
 source("construct_prior.R")
 source("divfunwrappers.R")
@@ -43,30 +42,17 @@ sim_seq <- function(nsamp1,theta1,coal_param=0,model=1){
 mc1 <- 16
 
 #' We produce an additional replication of simulations 
-#' Number of simulations per model class
-nsim <- 175000
-
-#' Sample size n
-nsamp <- 25
 
 for (i in 1:2){
-
-#' Switch folders since Watterson estimator for exponential growth is computed via C script that needs
-#' to be called in the right directory
-setwd("../general_scripts/")
-prior1 <- prior_obs_s(nsamp,models=c(1,2),nsimul=c(nsim,nsim,0,0,0,0),
-              ranges = list(c(0,0.5,1,2.5,4,7,10,25,50,75,100,500,1000),
-                            seq(1,1.9,0.1),NULL,NULL,NULL,0),
-              s_obs = c(15,20,30,40,60,75))
-setwd("../distpaper_res/")
+prior1 <- prior_theta(25,nsimul=rep(175000,3)) #175000
 
 clu1 <- makeForkCluster(nnodes = mc1)
 
 sims1 <- parApply(clu1,prior1,1,function(x){
-  divfun_most(sim_seq(nsamp1 = x[1],theta1 = x[5],coal_param = x[3],model = x[2]),x[1])})
+  divfun_af(sim_seq(nsamp1 = x[1],theta1 = x[4],coal_param = x[3],model = x[2]))
+})
 
 stopCluster(clu1)
 
-save(prior1,sims1,file=paste0("sims_rep",i,"/sim_m12_all_n",
-                              nsamp,".RData"))
+save(prior1,sims1,file=paste0("sims_rep",i,"/sim_scenario1.RData"))
 }

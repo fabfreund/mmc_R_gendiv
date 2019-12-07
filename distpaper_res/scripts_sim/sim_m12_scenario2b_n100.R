@@ -1,12 +1,17 @@
-set.seed(44986) #Seed 10
+setwd("../")
+
+
+set.seed(87598) #Seed 5
 
 
 #' Source scripts
 source("../general_scripts/lambdacoal_sim.R")
 source("../general_scripts/elength_lambdaxi.R")
+source("../general_scripts/ext_fun_CREB.R")
 source("../general_scripts/divstats.R")
 source("construct_prior.R")
 source("divfunwrappers.R")
+source("../general_scripts/misc_scripts.R")
 
 #' Wrapper for the different simulation scripts
 #' We use ms to simulate Kingman and related coalescents
@@ -49,11 +54,12 @@ for (i in 1:2){
 #' Switch folders since Watterson estimator for exponential growth is computed via C script that needs
 #' to be called in the right directory
 setwd("../general_scripts/")
-prior1 <- prior_obs_s(100,models=c(3),nsimul=c(0,0,nsim,0,0,0),
-              ranges = list(NULL,
-                            NULL,seq(0.05,0.95,0.1),NULL,NULL,0),
-              s_obs = c(15,20,30,40,60,75))
+prior1 <- prior_obs_s(100,models=c(1,2),nsimul=c(nsim,nsim,0,0,0,0),
+              ranges = list(c(0,0.5,1.5,3,5,8,11,15,25),
+                            seq(1,1.9,0.1),NULL,NULL,NULL,0),
+              s_obs = c(100,100))
 setwd("../distpaper_res/")
+prior1[,"theta_watt"] <- sapply(prior1[,"theta_watt"],log_smear,range1=2)
 
 clu1 <- makeForkCluster(nnodes = mc1)
 
@@ -62,5 +68,5 @@ sims1 <- parApply(clu1,prior1,1,function(x){
 
 stopCluster(clu1)
 
-save(prior1,sims1,file=paste0("sims_rep",i,"/sim_m3_af_n100.RData"))
+save(prior1,sims1,file=paste0("sims_rep",i,"/sim_m12_smear2_lowg_n100.RData"))
 }

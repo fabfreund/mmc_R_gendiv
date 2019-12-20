@@ -1,4 +1,4 @@
-Currently: The folder contains sample code needed to replicate our analysis from 'Distinguishing coalescent models - which statistics matter most?'
+# R code to replicate results in 'Distinguishing coalescent models - which statistics matter most?'
 
 IN "BETA TESTING", comments very welcome! 
 

@@ -29,4 +29,8 @@ R code by F. Menardo, S. Gagneux [Department of Medical Parasitology and Infecti
 
 Citation:
 
-WILL BE ADDED ASAP
+Multiple merger genealogies in outbreaks of *Mycobacterium tuberculosis*
+
+Fabrizio Menardo, Sébastien Gagneux, Fabian Freund
+
+bioRxiv 2019.12.21.885723; doi: <doi: https://doi.org/10.1101/2019.12.21.885723>

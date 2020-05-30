@@ -1,5 +1,6 @@
 load("../seeds/seeds.RData")
-set.seed(seeds1[20+2]) #Seed 20+i for mig scenario i (as in the filename)
+#set.seed(seeds1[20+2]) #Seed 20+i for mig scenario i (as in the filename)
+set.seed(seeds1[20+3]) #Seed 20+i for mig scenario i (as in the filename)
 #' Argument list
 nsamp <- 100
 expg_range <- c(0,0.5,1,2.5,4,7,10,25,50,75,100,500,1000)
@@ -18,7 +19,8 @@ mig1 <- c(0.5)
 nsim <- 175000
 
 #' Number of clusters
-mc1 <- 16
+mc1 <- 7#16
 
 #' resulting name
-simname <- "sim_m8_p9p1_n100.RData"
+#simname <- "sim_m8_p9p1_n100.RData"
+simname <- "sim_m8_p9p1_n100b.RData"

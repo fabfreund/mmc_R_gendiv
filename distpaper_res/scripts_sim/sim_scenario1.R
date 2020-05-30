@@ -39,7 +39,7 @@ sim_seq <- function(nsamp1,theta1,coal_param=0,model=1){
 
 #' Number of clusters
 
-mc1 <- 16
+mc1 <- 15
 
 #' We produce an additional replication of simulations 
 

@@ -1,17 +1,19 @@
-#' 2nd ABC-RF on the myobacterium tuberculosis data subset Lee2015, j. w. F. Menardi (Basel)
-#' We use statistics of the SFS, the minimal observable clade sizes and of the pairwise Hamming distances
-#' as summary statistics for the real ABC, using a random-forest based approach
+#' 2nd ABC-RF on the myobacterium tuberculosis data subset Lee2015
+#' We use statistics of the SFS, of the minimal observable clade sizes and 
+#' of the pairwise Hamming distances
+#' as summary statistics for the ABC, using a random-forest based approach
 #' We test the best-fitting model, Beta, vs. exponential decline
 
+load("mtb_data_call90.RData")
 
-i <- 3
+i <- which(names(data_main)=="Lee2015")
 
 
-rep1 <- 3
+rep1 <- 1
 #' For setting random seeds, only partially applied
-#load("seeds_TB.RData")
-#seed1 <- seeds1[29*3+i+rep1]
-#set.seed(seed1)
+load("seeds_TB.RData")
+seed1 <- seeds1[23*4+i+rep1]
+set.seed(seed1)
 
 
 library(abcrf)
@@ -27,17 +29,18 @@ source("../general_scripts/lambdacoal_sim.R")
 source("../general_scripts/divstats.R")
 source("../distpaper_res/construct_prior.R")
 
-load("TB_datasets_for_ABC.RData")
+#load("TB_data_ABC_data_fasta.RData")
 
-mc1 <- 16
+#' number of cores for parallel computation
+mc1 <- 7#20
 
 
-gran1 <- seq(0,5000,2)
-gran2 <- seq(0,20000,5)
+gran1 <- c(log(0.5),log(5000))
+gran2 <- c(log(0.5),log(20000))
 f1 <- function(x){switch(x,gran1,gran2)}
 growthrange0 <- lapply(c(1,2,1,1,2,1,2,2,1,1,1,2,2,1,1,1,2,2,2,1,1,1,1,1,2,2,2,2,2),f1)
-betarange0 <- seq(1,1.975,0.025)
-diracrange0 <- seq(0.025,0.975,0.025)
+betarange0 <- c(1,2)
+diracrange0 <- c(0,1)
 n0 <- 125000
 
 
@@ -101,29 +104,28 @@ sim_seq <- function(nsamp1,theta1,coal_param=0,model=1){
 }
 
 #' Diversity statistics
-
-divfun_few <- function(seq1,private=TRUE){
+divfun_ohaf <- function(seq1,private=TRUE){
   if (is.matrix(seq1)){
     log1 <- rep(TRUE,ncol(seq1))
     if (!private){log1 <- (colSums(seq1)>1)}
-    if (sum(log1)==0){out1 <- rep(NA,19)} else {
+    if (sum(log1)==0){out1 <- rep(NA,24)} else {
       seq1 <- as.matrix(seq1[,log1])
-      out1 <- c(quant_hm_oc(seq1),mean_sd_oc(seq1),
-              f_nucdiv_S(spectrum01(seq1)),allele_freqs(seq1,
-                                              quant_v = seq(.1,.9,.1)))}}
-  else {out1 <- rep(NA,19)}
-        names(out1) <-c("o_hm",paste0("o_q",seq(1,9,2)),"o_mean","o_sd",
-                        "nucdiv","S",
-                        paste0("AF_q",seq(1,9,1)))
+      out1 <- c(quant_hm_oc(seq1),mean_sd_oc(seq1),hammfun(seq1),
+                f_nucdiv_S(spectrum01(seq1)),allele_freqs(seq1,
+                                                          quant_v = seq(.1,.9,.1)))}}
+  else {out1 <- rep(NA,24)}
+  names(out1) <-c("o_hm",paste0("o_q",seq(1,9,2)),"o_mean","o_sd",
+                  paste0("ham_q",seq(1,9,2)),
+                  "nucdiv","S",
+                  paste0("AF_q",seq(1,9,1)))
   return(out1)}
-
 
 #' Get prior
 setwd("../general_scripts/")
-prior1 <- prior_obs_s(data_main[[i]]$n_ind,models=c(2),nsimul=c(0,n0,0,0,0,0),
+prior1 <- prior_obs_s_cont(data_main[[i]]$n_ind,models=c(2),nsimul=c(0,n0,0,0,0,0),
                       ranges = list(growthrange0[[i]],
                                     betarange0,diracrange0,NULL,NULL,0),
-                      s_obs = rep(data_main[[i]]$n_mut,2))
+                      s_obs = rep(data_main[[i]]$n_mut,2),mc1 = mc1)
 
 prior1 <- rbind(prior1,prior_obs_s_expd(data_main[[i]]$n_ind,nsimul = n0,
                                         s_obs = rep(data_main[[i]]$n_mut,2)))
@@ -136,7 +138,7 @@ setwd("../MTB_MMC_repo/")
 clu1 <- makeForkCluster(nnodes = mc1)
 
 sims1 <- parApply(clu1,prior1,1,function(x){
-  divfun_few(sim_seq(nsamp1 = x[1],theta1 = x[5],coal_param = x[3],model = x[2]))})
+  divfun_ohaf(sim_seq(nsamp1 = x[1],theta1 = x[5],coal_param = x[3],model = x[2]))})
 stopCluster(clu1)
 
 model1 <- prior1[,2]
@@ -151,9 +153,10 @@ coal_p <- coal_p[!(bad_cols)]
 
 sumstat1 <- t(sims1)
 rownames(sumstat1) <- NULL
-target1 <- as.data.frame(t(divfun_few(data_main[[i]]$seq_0_1)))
+target1 <- as.data.frame(t(divfun_ohaf(data_main[[i]]$seq_0_1)))
  
-
+#quantiles to be returned for posterior distribution
+quant_ret <- seq(0,1,0.025)
 
 param1 <- coal_p[model1==7]
 sumstat2 <- data.frame(param1,sumstat1[model1==7,])
@@ -162,7 +165,7 @@ growth_rf <- regAbcrf(param1~.,
                       paral = TRUE)
 growthfit_rf <- predict(growth_rf,target1,
                         sumstat2,paral=TRUE,
-                        quantiles = c(0,0.025,.05,.95,.975))
+                        quantiles = quant_ret)
 
 
 param1 <- coal_p[model1==2]
@@ -171,7 +174,7 @@ beta_rf <- regAbcrf(param1~.,
                     data=sumstat2,
                     paral = TRUE)
 betafit_rf <- predict(beta_rf,target1,sumstat2,paral=TRUE,
-                      quantiles = c(0,0.025,.05,.95,.975))
+                      quantiles = quant_ret)
 
 
 model1 <- as.factor(model1)
@@ -196,21 +199,19 @@ asmmc_error <-
 modsel1 <- levels(pred_ms$allocation)[as.numeric(pred_ms$allocation)]
 levels_rest <- levels(pred_ms$allocation)[-as.numeric(pred_ms$allocation)]
 modsel2 <- levels_rest[which.max(pred_ms$vote[-as.numeric(pred_ms$allocation)])]
-if (modsel1==6){postmed <- 0;post_lq <- NA;post_hq <- NA} else {
-  fittedparam <- switch(modsel1,"7"=growthfit_rf,"2"=betafit_rf)
-  postmed <- fittedparam$med; post_lq <- fittedparam$quantiles[2]  
-  post_hq <- fittedparam$quantiles[5] 
+if (modsel1==6){postmed <- 0;post_q <- rep(NA,length(quant_ret))} else {
+  fittedparam <- switch(modsel1,"1"=growthfit_rf,"2"=betafit_rf,"3"=diracfit_rf)
+  postmed <- fittedparam$med; post_q <- fittedparam$quantiles
 }
 if (modsel2==6){postmed2 <- 0} else {
   fitted2param <- switch(modsel2,"7"=growthfit_rf,"2"=betafit_rf)
   postmed2 <- fitted2param$med 
 }
 
-out1 <- as.data.frame(list(dataset=names(data_main)[i],oob=round(rf_ms$prior.err,3),
+out1 <- as.data.frame(as.list(c(dataset=names(data_main)[i],oob=round(rf_ms$prior.err,3),
                            asmmcoob=round(asmmc_error,3),
                       modelsel=modsel1,postp=round(pred_ms$post.prob,3),postmed = postmed, 
-                      postq025=post_lq,
-                      postq975 = post_hq,modsel2=modsel2,postmed2=postmed2))
+                      qu=post_q,modsel2=modsel2,postmed2=postmed2)))
 
 
 write.table(out1,file=paste0("res/abcres",rep1,"_",names(data_main)[i],"expd.txt"),quote = FALSE,

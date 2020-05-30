@@ -28,20 +28,22 @@ SFS <- c(53:nrow(sims1))
 
 #' Different choices of sets of stats for the ABC, including transformations 
 if (stats_used=="af"){
-rows_abc <- list(c(o_coarse,ham_coarse,phy_coarse,r2_coarse,s_pi,af_coarse),
-                 c(ham_coarse,phy_coarse),
-                 c(o_coarse,r2_coarse),
-                 c(s_pi,af_coarse),
-                 c(ham_coarse,phy_coarse,r2_coarse,s_pi,af_coarse),
-                 c(o_coarse,r2_coarse,s_pi,af_coarse),
-                 c(o_coarse,ham_coarse,phy_coarse,s_pi,af_coarse),
+rows_abc <- list(c(s_pi,af_coarse),
+                 c(o_coarse,s_pi,af_coarse),
+                 c(ham_coarse,s_pi,af_coarse),
+                 c(phy_coarse,s_pi,af_coarse),
+                 c(r2_coarse,s_pi,af_coarse),
+                 c(o_coarse,ham_coarse,s_pi,af_coarse),
                  c(o_coarse,ham_coarse,phy_coarse,r2_coarse),
-                 c(ham_coarse,phy_coarse,s_pi,af_coarse))
+                 c(ham_coarse,phy_coarse,r2_coarse,s_pi,af_coarse),
+                 c(o_coarse,ham_coarse,phy_coarse,r2_coarse,s_pi,af_coarse))
 #' Input vector
 stats1 <- vector("list",9)
+#' Which stat set is used for importance scoring?
+index_imp <- 9
 #' Names of sets of stats
-names(stats1) <- c("FULL","Ham, Phy","O, r2","AF+",
-                   "FULL - O","O, r2, AF+","FULL - r2","FULL - AF+","Ham,Phy,AF+")
+names(stats1) <- c("AF+","AF+, O","AF+, Ham","AF+, Phy","AF+, r2",
+                   "AF+,O,Ham","FULL - AF+","FULL - O","FULL")
 }
 
 
@@ -50,18 +52,20 @@ if (stats_used=="ohamsfs"){
   sims1 <- rbind(sims1,S15plus=sims2)
   SFSl <- c(SFS[1:14],max(SFS)+1)
   o_coarse <- o_coarse[2:6]
-  rows_abc <- list(c(o_coarse,ham_coarse,SFSl),
-                   o_coarse,
+  rows_abc <- list(o_coarse,
                    ham_coarse,
                    SFSl,
-                   c(ham_coarse,SFSl),
+                   c(o_coarse,ham_coarse),
                    c(o_coarse,SFSl),
-                   c(o_coarse,ham_coarse))
+                   c(ham_coarse,SFSl),
+                   c(o_coarse,ham_coarse,SFSl))
   #' Input vector
   stats1 <- vector("list",7)
+  #' Which stat set is used for importance scoring?
+  index_imp <- 7
   #' Names of sets of stats
-  names(stats1) <- c("FULL","O","Ham","SFSl",
-                     "Ham,SFSl","O,SFSl","O, Ham")
+  names(stats1) <- c("O","Ham","SFSl",
+                     "O, Ham","O,SFSl","Ham,SFSl","FULL")
 }
 
 
@@ -88,57 +92,81 @@ if (stats_used=="fold"){
   fSFS <- max(SFS) + 1:nrow(sims2)
   fSFSl <- c(max(SFS) + c(1:14),max(fSFS)+1)
   Si_t <- c(max(SFS),max(fSFS)+1) 
-  rows_abc <- list(c(ham_coarse,phy_coarse,r2_coarse,s_pi,fSFS),
-                   c(ham_coarse,phy_coarse,r2_coarse),
-                   c(s_pi,fSFS),
+  rows_abc <- list(c(s_pi,fSFS),
                    c(s_pi,fSFSl),
+                   c(s_pi,Si_t),
+                   c(ham_coarse,phy_coarse,r2_coarse),
+                   c(ham_coarse,s_pi,Si_t),
+                   c(phy_coarse,s_pi,Si_t),
                    c(r2_coarse,s_pi,Si_t),
-                   c(r2_coarse,s_pi,fSFSl)
+                   c(ham_coarse,r2_coarse,s_pi,Si_t),
+                   c(ham_coarse,phy_coarse,r2_coarse,s_pi,fSFS)
                    )
   #' Input vector
-  stats1 <- vector("list",6)
+  stats1 <- vector("list",9)
+  #' Which stat set is used for importance scoring?
+  index_imp <- 9
   #' Names of sets of stats
-  names(stats1) <- c("FULL","Ham,Phy,r2","fSFS+","fSFSl+",
-                     "r2,fSi.t+","r2,fSFSl+")
+  names(stats1) <- c("fSFS+","fSFSl+","fSi.t+",
+                     "Ham,Phy,r2","Ham,fSi.t+",
+                     "Phy,fSi.t+","r2,fSi.t+","H,r2,fSi.t+",
+                     "FULL")
 }
 
+
 if (stats_used=="fine"){
-  rows_abc <- list(c(o_fine,ham_fine,phy_fine,r2_fine,s_pi,af_fine),
-                   c(ham_fine,phy_fine),
-                   c(o_fine,r2_fine),
-                   c(s_pi,af_fine),
+  rows_abc <- list(c(ham_fine,phy_fine,r2_fine),
+                   o_fine,c(s_pi,af_fine),
+                   c(o_fine,ham_fine,s_pi,af_fine),
                    c(ham_fine,phy_fine,r2_fine,s_pi,af_fine),
-                   c(o_fine,r2_fine,s_pi,af_fine),
-                   c(o_fine,ham_fine,phy_fine,s_pi,af_fine),
                    c(o_fine,ham_fine,phy_fine,r2_fine),
-                   c(ham_fine,phy_fine,s_pi,af_fine))
+                   c(o_fine,phy_fine,r2_fine,s_pi,af_fine),
+                   c(o_fine,ham_fine,phy_fine,r2_fine,s_pi,af_fine))
   #' Input vector
-  stats1 <- vector("list",9)
+  stats1 <- vector("list",8)
+  #' Which stat set is used for importance scoring?
+  index_imp <- 8
   #' Names of sets of stats
-  names(stats1) <- c("FULL","Ham, Phy","O, r2","AF+",
-                     "FULL - O","O, r2, AF+","FULL - r2","FULL - AF+","Ham,Phy,AF+")
+  names(stats1) <- c("Ham, Phy, r^2","O","AF+",
+                     "O, Ham,AF+","FULL - O",
+                     "FULL - AF+","FULL - Ham","FULL")
 }
+
+if (stats_used=="fine2"){
+  rows_abc <- list(c(o_coarse,ham_coarse,s_pi,af_fine),
+                   c(o_coarse,ham_coarse,s_pi,af_coarse))
+  #' Input vector
+  stats1 <- vector("list",2)
+  #' Which stat set is used for importance scoring?
+  index_imp <- 1
+  #' Names of sets of stats
+  names(stats1) <- c("O,Ham,fineAF+","O,Ham,AF+")
+}
+
 
 if (stats_used=="sfs"){
   sims2 <- apply(sims1[SFS[-(1:14)],],2,sum) 
   sims1 <- rbind(sims1,S15plus=sims2)
   SFSl <- c(SFS[1:14],max(SFS)+1)
   Si_t <- SFSl[c(1,15)]
-  index_imp <- 8
-  rows_abc <- list(c(o_coarse,ham_coarse,phy_coarse,r2_coarse,s_pi,D_H,SFS),
-                   c(s_pi,D_H,SFS),
+  #index_imp <- 8
+  rows_abc <- list(c(s_pi,D_H,SFS),
                    c(s_pi,D_H,SFSl),
                    SFS,
                    Si_t,
-                   c(o_coarse,r2_coarse,Si_t),
-                   c(o_coarse,r2_coarse,s_pi,D_H,Si_t),
-                   c(o_coarse,r2_coarse,SFSl)
+                   c(o_coarse,Si_t),
+                   c(o_coarse,s_pi,D_H,Si_t),
+                   c(o_coarse,ham_coarse,SFSl),
+                   c(o_coarse,ham_coarse,s_pi,D_H,SFSl),
+                   c(o_coarse,ham_coarse,phy_coarse,r2_coarse,s_pi,D_H,SFS)
                    )
   #' Input vector
-  stats1 <- vector("list",8)
+  stats1 <- vector("list",9)
+  #' Which stat set is used for importance scoring?
+  index_imp <- 8
   #' Names of sets of stats
-  names(stats1) <- c("FULL","SFS*","SFSl*","SFS","Si.t","O,r2,Si.t","O,r2,Si.t*",
-                     "O,r2,SFSl")
+  names(stats1) <- c("SFS*","SFSl*","SFS","Si.t","O,Si.t","O,Si.t*","O,Ham,SFSl",
+                     "O,Ham,SFSl*","FULL")
 }
 
 #' adds linear discriminant
@@ -149,20 +177,22 @@ if (stats_used=="lda"){
                              }
   lda1 <- TRUE
   sims1 <- t(apply(sims1,1,scale_const)) #scale variables to interpret l.d. loadings
-  rows_abc <- list(c(o_coarse,ham_coarse,phy_coarse,r2_coarse,s_pi,af_coarse),
-                   c(ham_coarse,phy_coarse),
-                   c(o_coarse,r2_coarse),
-                   c(s_pi,af_coarse),
-                   c(ham_coarse,phy_coarse,r2_coarse,s_pi,af_coarse),
-                   c(o_coarse,r2_coarse,s_pi,af_coarse),
-                   c(o_coarse,ham_coarse,phy_coarse,s_pi,af_coarse),
+  rows_abc <- list(c(s_pi,af_coarse),
+                   c(o_coarse,s_pi,af_coarse),
+                   c(ham_coarse,s_pi,af_coarse),
+                   c(phy_coarse,s_pi,af_coarse),
+                   c(r2_coarse,s_pi,af_coarse),
+                   c(o_coarse,ham_coarse,s_pi,af_coarse),
                    c(o_coarse,ham_coarse,phy_coarse,r2_coarse),
-                   c(ham_coarse,phy_coarse,s_pi,af_coarse))
+                   c(ham_coarse,phy_coarse,r2_coarse,s_pi,af_coarse),
+                   c(o_coarse,ham_coarse,phy_coarse,r2_coarse,s_pi,af_coarse))
   #' Input vector
   stats1 <- vector("list",9)
+  #' Which stat set is used for importance scoring?
+  index_imp <- 9
   #' Names of sets of stats
-  names(stats1) <- c("FULL","Ham, Phy","O, r2","AF+",
-                     "FULL - O","O, r2, AF+","FULL - r2","FULL - AF+","Ham,Phy,AF+")
+  names(stats1) <- c("AF+","AF+, O","AF+, Ham","AF+, Phy","AF+, r2",
+                     "AF+,O,Ham","FULL - AF+","FULL - O","FULL")
 }
 #' How many ABC runs per set of stats per replication
 nreps <- 10

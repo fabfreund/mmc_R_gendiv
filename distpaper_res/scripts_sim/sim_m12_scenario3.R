@@ -43,7 +43,7 @@ sim_seq <- function(nsamp1,theta1,coal_param=0,model=1){
 
 #' Number of clusters
 
-mc1 <- 16
+mc1 <- 7#15
 
 #' We produce an additional replication of simulations 
 #' Number of simulations per model class
@@ -54,10 +54,11 @@ for (i in 1:2){
 #' Switch folders since Watterson estimator for exponential growth is computed via C script that needs
 #' to be called in the right directory
 setwd("../general_scripts/")
-prior1 <- prior_obs_s(147,models=c(1,2),nsimul=c(nsim,nsim,0,0,0,0),
-              ranges = list(c(0,0.5,1,2.5,4,7,10,25,50,75,100,500,1000),
-                            seq(1,1.9,0.1),NULL,NULL,NULL,0),
-              s_obs = c(454,454))
+prior1 <- prior_obs_s_cont(147,models=c(1,2),nsimul=c(nsim,nsim,0,0,0,0),
+              ranges = list(c(log(0.5),log(1000)),
+                            c(1,2),NULL,NULL,NULL,c(0,0)),
+              s_obs = c(454,454),log_growth = TRUE,
+              include_g0 = nsim*0.02)
 setwd("../distpaper_res/")
 prior1[,"theta_watt"] <- sapply(prior1[,"theta_watt"],log_smear,range1=10)
 

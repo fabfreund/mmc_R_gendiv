@@ -2,7 +2,7 @@
 
 This repository contains simulation and inference scripts for multiple merger and other n-coalescents
 
-IN BETA TESTING - COMMENTS VERY WELCOME! 
+COMMENTS VERY WELCOME! 
 
 # Subfolders distpaper_res/, general_scripts/ and seeds/
 
@@ -10,7 +10,7 @@ R scripts to simulate genetic diversity under multiple merger (and other) coales
 
 Code by F. Freund ([U. Hohenheim](http://evoplant.uni-hohenheim.de/people/freund/)) and A. Siri-Jégousse ([IIMAS, UNAM Mexico City](http://sigma.iimas.unam.mx/arno/))
 
-The repository includes sample code we used for our manuscript "Distinguishing coalescent models - which statistics matter most?", availabe on biorxiv <https://www.biorxiv.org/content/10.1101/679498v2>. See folder distpaper_res.
+The repository includes sample code we used for our manuscript "Distinguishing coalescent models - which statistics matter most?", available on biorxiv <https://www.biorxiv.org/content/10.1101/679498v2>. See folder distpaper_res.
 
 We thank [Bjarki Eldon (Museum für Naturkunde, Berlin)](http://page.math.tu-berlin.de/~eldon/index.html) for allowing us to share his code here for computing the expected branch lengths for Kingman's n-coalescent with exponential growth (see README in folder general_scripts). 
 
@@ -34,3 +34,6 @@ Multiple merger genealogies in outbreaks of *Mycobacterium tuberculosis*
 Fabrizio Menardo, Sébastien Gagneux, Fabian Freund
 
 bioRxiv 2019.12.21.885723; doi: <doi: https://doi.org/10.1101/2019.12.21.885723>
+
+# Examples and explanations
+Please see a_short_intro_w_examples.Rmd (or its html output) for an overview of the most important functions we supply.

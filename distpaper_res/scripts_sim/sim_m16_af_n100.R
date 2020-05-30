@@ -8,10 +8,26 @@ set.seed(61280) #Seed 22
 source("../general_scripts/lambdacoal_sim.R")
 source("../general_scripts/elength_lambdaxi.R")
 source("../general_scripts/ext_fun_CREB.R")
-source("../general_scripts/ext_fun_TajD_FWH.R")
+#source("../general_scripts/ext_fun_TajD_FWH.R")
 source("../general_scripts/divstats.R")
 source("construct_prior.R")
-source("divfunwrappers.R")
+#source("divfunwrappers.R")
+
+divfun_af <- function(seq1){
+  if (is.matrix(seq1)){
+    out1 <- c(quant_hm_oc(seq1),mean_sd_oc(seq1),
+              hammfun(seq1),phylolength(seq1),r2fun(seq1),
+              f_nucdiv_S(spectrum01(seq1)),allele_freqs(seq1))}
+  else {out1 <- rep(NA,30)}
+  names(out1) <-c("hm(O)",paste("O: qu",seq(.1,.9,.2)),"mean(O)","sd(O)",
+                  paste("Ham: qu",seq(.1,.9,.2)),
+                  paste("Phy: qu",seq(.1,.9,.2)),
+                  paste("r2: qu",seq(.1,.9,.2)),
+                  "Nucl. div.","S",
+                  paste("AF: qu",seq(.1,.9,.2)))
+  return(out1)}
+
+
 
 #' Wrapper for the different simulation scripts
 #' We use ms to simulate Kingman and related coalescents
@@ -57,10 +73,11 @@ for (i in 1:2){
 #' Switch folders since Watterson estimator for exponential growth is computed via C script that needs
 #' to be called in the right directory
 setwd("../general_scripts/")
-prior1 <- prior_obs_s(nsamp,models=c(1,6),nsimul=c(nsim,0,0,0,0,nsim),
-              ranges = list(c(0,0.5,1,2.5,4,7,10,25,50,75,100,500,1000),
-                            seq(1,1.9,0.1),NULL,NULL,NULL,0),
-              s_obs = c(100,150,200))
+prior1 <- prior_obs_s_cont(nsamp,models=c(1,6),nsimul=c(nsim,0,0,0,0,nsim),
+              ranges = list(c(log(1),log(1000)),
+                            c(1,2),NULL,NULL,NULL,c(0,0)),
+              s_obs = c(100,150,200),log_growth = TRUE,
+              include_g0 = 0)
 setwd("../distpaper_res/")
 
 clu1 <- makeForkCluster(nnodes = mc1)

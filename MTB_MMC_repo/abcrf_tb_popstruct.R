@@ -1,22 +1,24 @@
-#args <- commandArgs(TRUE)
-#i <- as.integer(args[1])
+#' Performs ABC model selection KM+exp w. pop. structure vs. BETA vs. Dirac
+#' for Lee 2015
 
-#' We only need it for data set 3
+load("mtb_data_call90.RData")
 
-i <- 3
+#' We only need it for data set Lee 2015
+
+i <- which(names(data_main)=="Lee2015")
+
 
 #' Seeds
 
-rep1 <- 3
+rep1 <- 2
 
 #' Seed setting, only partially applied in the manuscript
-#load("seeds_TB.RData")
-#seed1 <- seeds1[29*2+i] #Third batch: Popstructure
-#seed1 <- seeds1[29*2+i+rep1] #rerun i: seed +rep1
-#set.seed(seed1)
+load("seeds_TB.RData")
+seed1 <- seeds1[29*4+i+rep1] 
+set.seed(seed1)
 
 #' We perform a random forest based ABC for model selection and parameter estimation
-#' based on minimal observable clade sizes, r^2 and AF+
+#' based on minimal observable clade sizes, Hamming distances and AF+
 #' We perform model selection between Beta, Dirac and structured Kingman + exp
 
 library(abcrf)
@@ -32,17 +34,16 @@ source("../general_scripts/lambdacoal_sim.R")
 source("../general_scripts/divstats.R")
 source("../distpaper_res/construct_prior.R")
 
-load("TB_datasets_for_ABC.RData")
-
-mc1 <- 16
+#' number of cores for parallel computation
+mc1 <- 7
 
 
 gran1 <- seq(0,5000,2)
 gran2 <- seq(0,20000,5)
 f1 <- function(x){switch(x,gran1,gran2)}
 growthrange0 <- lapply(c(1,2,1,1,2,1,2,2,1,1,1,2,2,1,1,1,2,2,2,1,1,1,1,1,2,2,2,2,2),f1)
-betarange0 <- seq(1,1.975,0.025)
-diracrange0 <- seq(0.025,0.975,0.025)
+betarange0 <- c(1,2)
+diracrange0 <- c(0,1)
 migrange <- c(.25,.5,1,2,3)
 n0 <- 125000
 n_1mig <- n0/length(migrange) 
@@ -78,10 +79,10 @@ prior_obs_s_exp_popstr <- function(n_ind,nsimul=100,
 
 
 setwd("../general_scripts/")
-prior1 <- prior_obs_s(data_main[[i]]$n_ind,models=c(2,3),nsimul=c(0,n0,n0,0,0,0),
+prior1 <- prior_obs_s_cont(data_main[[i]]$n_ind,models=c(2,3),nsimul=c(0,n0,n0,0,0,0),
                       ranges = list(growthrange0[[i]],
-                                    betarange0,diracrange0,NULL,NULL,0),
-                      s_obs = rep(data_main[[i]]$n_mut,2))
+                                    betarange0,diracrange0,NULL,NULL,c(0,0)),
+                      s_obs = rep(data_main[[i]]$n_mut,2),mc1 = mc1)
 
 prior1[,"theta_watt"] <- sapply(prior1[,"theta_watt"],log_smear)
 
@@ -134,18 +135,20 @@ sim_seq_popstr <- function(nsamp1=100,theta1,coal_param=0.5,samples=c(50,50),mig
 
 #' Diversity stats
 
-divfun_or2af <- function(seq1,private=TRUE){
+divfun_ohaf <- function(seq1,private=TRUE){
   if (is.matrix(seq1)){
     log1 <- rep(TRUE,ncol(seq1))
     if (!private){log1 <- (colSums(seq1)>1)}
-    if (sum(log1)==0){out1 <- rep(NA,20)} else {
+    if (sum(log1)==0){out1 <- rep(NA,24)} else {
       seq1 <- as.matrix(seq1[,log1])
-      out1 <- c(quant_hm_oc(seq1),mean_sd_oc(seq1),
-            r2fun(seq1),f_nucdiv_S(spectrum01(seq1)),allele_freqs(seq1))}}
-  else {out1 <- rep(NA,20)}
-        names(out1) <-c("o_hm",paste0("o_q",seq(1,9,2)),"o_mean","o_sd",
-                        paste0("r2_q",seq(1,9,2)),"nucdiv","S",
-                        paste0("AF",seq(1,9,2)))
+      out1 <- c(quant_hm_oc(seq1),mean_sd_oc(seq1),hammfun(seq1),
+                f_nucdiv_S(spectrum01(seq1)),allele_freqs(seq1,
+                                                          quant_v = seq(.1,.9,.1)))}}
+  else {out1 <- rep(NA,24)}
+  names(out1) <-c("o_hm",paste0("o_q",seq(1,9,2)),"o_mean","o_sd",
+                  paste0("ham_q",seq(1,9,2)),
+                  "nucdiv","S",
+                  paste0("AF_q",seq(1,9,1)))
   return(out1)}
 
 sims2 <- NULL
@@ -153,11 +156,11 @@ sims2 <- NULL
 clu1 <- makeForkCluster(nnodes = mc1)
 
 sims1 <- parApply(clu1,prior1,1,function(x){
-  divfun_or2af(sim_seq(nsamp1 = x[1],theta1 = x[5],coal_param = x[3],model = x[2]))})
+  divfun_ohaf(sim_seq(nsamp1 = x[1],theta1 = x[5],coal_param = x[3],model = x[2]))})
 
 for (l in 1:length(migrange)){
   sims2 <- cbind(sims2,parApply(clu1,prior_temp[[l]],1,function(x){
-    divfun_or2af(sim_seq_popstr(nsamp1 = x[1],theta1 = x[5],coal_param = x[3],samples = c(61,36,49,1),
+    divfun_ohaf(sim_seq_popstr(nsamp1 = x[1],theta1 = x[5],coal_param = x[3],samples = c(61,36,49,1),
                                  migr = migrange[l]))}))  
 }
 
@@ -181,9 +184,10 @@ coal_p <- coal_p[!(bad_cols)]
 
 sumstat1 <- t(sims1)
 rownames(sumstat1) <- NULL
-target1 <- as.data.frame(t(divfun_or2af(data_main[[i]]$seq_0_1)))
+target1 <- as.data.frame(t(divfun_ohaf(data_main[[i]]$seq_0_1)))
  
-
+#quantiles to be returned for posterior distribution
+quant_ret <- seq(0,1,0.025)
 #' K+exp+struct is model 8, we just fit growth, mig is nuisance param
 param1 <- coal_p[model1==8]
 sumstat2 <- data.frame(param1,sumstat1[model1==8,])
@@ -192,7 +196,7 @@ growth_rf <- regAbcrf(param1~.,
                       paral = TRUE)
 growthfit_rf <- predict(growth_rf,target1,
                         sumstat2,paral=TRUE,
-                        quantiles = c(0,0.025,.05,.95,.975))
+                        quantiles = quant_ret)
 
 print(growthfit_rf)
 
@@ -202,7 +206,7 @@ beta_rf <- regAbcrf(param1~.,
                     data=sumstat2,
                     paral = TRUE)
 betafit_rf <- predict(beta_rf,target1,sumstat2,paral=TRUE,
-                      quantiles = c(0,0.025,.05,.95,.975))
+                      quantiles = quant_ret)
 
 print(betafit_rf)
 
@@ -212,7 +216,7 @@ dirac_rf <- regAbcrf(param1~.,
                      data=sumstat2,
                      paral = TRUE)
 diracfit_rf <- predict(dirac_rf,target1,sumstat2,
-                       paral=TRUE,quantiles = c(0,0.025,.05,.95,.975))
+                       paral=TRUE,quantiles = quant_ret)
 
 print(diracfit_rf)
 
@@ -243,26 +247,18 @@ modsel1 <- levels(pred_ms$allocation)[as.numeric(pred_ms$allocation)]
 levels_rest <- levels(pred_ms$allocation)[-as.numeric(pred_ms$allocation)]
 modsel2 <- levels_rest[which.max(pred_ms$vote[-as.numeric(pred_ms$allocation)])]
 fittedparam <- switch(modsel1,"8"=growthfit_rf,"2"=betafit_rf,"3"=diracfit_rf)
-postmed <- fittedparam$med; post_lq <- fittedparam$quantiles[2]  
-post_hq <- fittedparam$quantiles[5] 
+postmed <- fittedparam$med; post_q <- fittedparam$quantiles
 
   fitted2param <- switch(modsel2,"8"=growthfit_rf,"2"=betafit_rf,"3"=diracfit_rf)
   postmed2 <- fitted2param$med 
 
-
-out1 <- as.data.frame(list(dataset=names(data_main)[i],oob=round(rf_ms$prior.err,3),
+out1 <- as.data.frame(as.list(c(dataset=names(data_main)[i],oob=round(rf_ms$prior.err,3),
                            asmmcoob=round(asmmc_error,3),
                       modelsel=modsel1,postp=round(pred_ms$post.prob,3),postmed = postmed, 
-                      postq025=post_lq,
-                      postq975 = post_hq,modsel2=modsel2,postmed2=postmed2))
+                      qu=post_q,modsel2=modsel2,postmed2=postmed2)))
 
 
 write.table(out1,file=paste0("res/abcres",rep1,"_",names(data_main)[i],"_struct.txt"),quote = FALSE,
             row.names = FALSE)
-
-
-
-#save(growthfit_rf,diracfit_rf,betafit_rf,pred_ms,
-#     file=paste0("resdata/rfres_",names(data_main)[i],"_struct.RData"))
 
 

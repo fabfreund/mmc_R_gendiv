@@ -94,12 +94,19 @@ names(S) <- "S"
 return(c(pi,S))}  
 
 #' Output of r^2 as LD measure between pairs of SNPs
+#r2fun_ERR <- function(seq1,quant_v = c(.1,.3,.5,.7,.9)){
+#  cor1 <- cor(seq1)
+#  cor1 <- cor1[lower.tri(seq1)]
+#  r2 <- cor1^2
+#  return(c(r2=quantile(r2,quant_v,na.rm = TRUE)))
+#}
 r2fun <- function(seq1,quant_v = c(.1,.3,.5,.7,.9)){
   cor1 <- cor(seq1)
-  cor1 <- cor1[lower.tri(seq1)]
+  cor1 <- cor1[lower.tri(cor1)]
   r2 <- cor1^2
   return(c(r2=quantile(r2,quant_v,na.rm = TRUE)))
 }
+
 
 #' Internal function that computes the minimal observable clade size of the sequence
 #' represented by row i

@@ -2,7 +2,11 @@ setwd("../")
 
 
 
-set.seed(53373) #Seed 11
+set.seed(53373) #Seed 11 + 1, error with seed 53373: 
+#Error in unserialize(node$con) : error reading from connection
+#Calls: parApply ... FUN -> recvData -> recvData.SOCK0node -> unserialize
+#Execution halted
+
 
 
 #' Source scripts
@@ -11,7 +15,22 @@ source("../general_scripts/elength_lambdaxi.R")
 source("../general_scripts/betaxicoal_sim.R")
 source("../general_scripts/divstats.R")
 source("construct_prior.R")
-source("divfunwrappers.R")
+
+
+divfun_af <- function(seq1){
+  if (is.matrix(seq1)){
+    out1 <- c(quant_hm_oc(seq1),mean_sd_oc(seq1),
+              hammfun(seq1),phylolength(seq1),r2fun(seq1),
+              f_nucdiv_S(spectrum01(seq1)),allele_freqs(seq1))}
+  else {out1 <- rep(NA,30)}
+  names(out1) <-c("hm(O)",paste("O: qu",seq(.1,.9,.2)),"mean(O)","sd(O)",
+                  paste("Ham: qu",seq(.1,.9,.2)),
+                  paste("Phy: qu",seq(.1,.9,.2)),
+                  paste("r2: qu",seq(.1,.9,.2)),
+                  "Nucl. div.","S",
+                  paste("AF: qu",seq(.1,.9,.2)))
+  return(out1)}
+
 
 library(parallel)
 

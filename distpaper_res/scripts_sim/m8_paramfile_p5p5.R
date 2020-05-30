@@ -18,7 +18,7 @@ mig1 <- c(0.5)
 nsim <- 175000
 
 #' Number of clusters
-mc1 <- 16
+mc1 <- 7#16
 
 #' resulting name
 simname <- "sim_m8_p5p5_n100.RData"

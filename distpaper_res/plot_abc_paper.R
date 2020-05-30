@@ -1,5 +1,5 @@
 #' ABC output is e.g. named modsel_rep2_m12_fold_n100.RData - only take the middle part. This needs to be adjusted 
-args <- c("m12_all_n25sfs",1,2)
+args <- c("m12_all_n100ohamsfs",1,2)
 
 
 load(paste0("abc_res/modsel_rep1_",args[1],".RData"))
@@ -29,7 +29,7 @@ names0 <- names(res_conf)
 print(sapply(res_imp,length))
 print(sapply(res_imp1,length))
 print(names(res_imp[[1]]))
-
+print(names(res_imp1[[1]]))
 
 
 let1 <- 3 #cex argument
@@ -93,24 +93,36 @@ var_imps[[i]] <- sapply(res_imp,function(v){v[i]})
 var_imps2[[i]] <- sapply(res_imp1,function(v){v[i]})  
 }
 
+#' Only when pooling var importance, e.g. for folded scenario
+#tempvarimp <- NULL
+#tempvarimp2 <- NULL
+#for (var1 in paste0("fS",17:50)){tempvarimp <- unname(c(tempvarimp,var_imps[[var1]]))
+#                                 tempvarimp2 <- unname(c(tempvarimp2,var_imps2[[var1]]))}
+#var_imps <- c(var_imps[1:30],"fS17-50"=list(tempvarimp))
+#var_imps2 <- c(var_imps2[1:30],"fS17-50"=list(tempvarimp2))
+#varnames <- names(var_imps)
+
 #Adjust variable importance scored variables here
-varnames2 <- list(c("O: hm",paste("O:",quantnames),"O: mean","O: sd"),
+varnames2 <- list(#c("O: hm",paste("O:",quantnames),"O: mean","O: sd"),
                   #c("O: hm",paste("O:",quantnames_fine),"O: mean","O: sd"),
+                  paste("O:",quantnames),
                   #paste("nO:",quantnames),
                   #paste("nHam:",quantnames),
-                  #paste("Ham:",quantnames),
+                  paste("Ham:",quantnames),#[-1],
                   #paste("Ham:",quantnames_fine),
                   #paste0("S",1:14,"/S"),"S15+/S"
                   #paste("PHY:",quantnames),
-                  #paste("Phy:",quantnames)[-1],#[-(1:3)],
+                  #paste("Phy:",quantnames)[5],#[-(1:3)],
                   #paste("Phy:",quantnames_fine)[6:9],
-                  paste("r2:",quantnames),
+                  #paste("r2:",quantnames),
                   #paste("r2:",quantnames_fine),
                   #c("nucl. div","S"),
                   #"Tajima's D","Fay & Wu's H",
                   paste0("S",1:14),"S15+"
+                  #paste0("S",1:24)
                   #paste0("S",1:99)
                   #paste0("fS",1:50)
+                  #c(paste0("fS",1:16),"fS17-50")
                   #paste("AF:",quantnames)#,
                   #"LD1"
                   #paste("AF:",quantnames_fine)
@@ -131,17 +143,17 @@ yticks  <- tickpos
 #yticks <- sort(36 - c(1:5,7:8,10:14,16:20,22:26,28:35))
 names(yticks) <- varnames
 
-plot(NULL,xlim = range(c(unlist(var_imps),unlist(var_imps2))),
+plot(NULL,xlim = range(c(unlist(var_imps),unlist(var_imps2)),na.rm = TRUE),
      ylim=c(1,max(tickpos)),yaxt = "n",xlab="Variable importance (debiased)",
      ylab="",cex=let1)
 
 axis(2,at= yticks,
      labels = unlist(varnames2),las=2)
 for (i in varnames){
-  lines(range(var_imps[[i]]),rep(yticks[i],2),type="l")
-  lines(range(var_imps2[[i]]),rep(yticks[i],2)+0.1,type="l",col="gray")
-  points(mean(var_imps[[i]]),yticks[i],pch=8)
-  points(mean(var_imps2[[i]]),yticks[i]+0.1,pch=8,col="gray")
+  lines(range(var_imps[[i]],na.rm = TRUE),rep(yticks[i],2),type="l")
+  lines(range(var_imps2[[i]],na.rm = TRUE),rep(yticks[i],2)+0.1,type="l",col="gray")
+  points(mean(var_imps[[i]],na.rm = TRUE),yticks[i],pch=8)
+  points(mean(var_imps2[[i]],na.rm = TRUE),yticks[i]+0.1,pch=8,col="gray")
   
 }
 par(oma=c(0,0,0,0))

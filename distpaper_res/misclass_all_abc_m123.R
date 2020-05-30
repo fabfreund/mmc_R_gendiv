@@ -145,4 +145,4 @@ miscl[2,] <- miscl_abc("mnl")
 miscl[3,] <- miscl_abc("nn")
 miscl[4,] <- miscl_abcrf()
 
-save(miscl,file="ABC_allmeth_m123_altrf2.RData")
+save(miscl,file="ABC_allmeth_m123_altrf.RData")

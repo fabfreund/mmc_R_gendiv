@@ -23,21 +23,23 @@ load("serial_data.RData")
 
 #' Diversity function used 
 
-divfun_or2af <- function(seq1,private=TRUE){
+
+
+divfun_ohaf <- function(seq1,private=TRUE){
   if (is.matrix(seq1)){
     log1 <- rep(TRUE,ncol(seq1))
     if (!private){log1 <- (colSums(seq1)>1)}
-    if (sum(log1)==0){out1 <- rep(NA,20)} else {
+    if (sum(log1)==0){out1 <- rep(NA,24)} else {
       seq1 <- as.matrix(seq1[,log1])
-      out1 <- c(quant_hm_oc(seq1),mean_sd_oc(seq1),
-                r2fun(seq1),f_nucdiv_S(spectrum01(seq1)),allele_freqs(seq1))}}
-  else {out1 <- rep(NA,20)}
+      out1 <- c(quant_hm_oc(seq1),mean_sd_oc(seq1),hammfun(seq1),
+                f_nucdiv_S(spectrum01(seq1)),allele_freqs(seq1,
+                                                          quant_v = seq(.1,.9,.1)))}}
+  else {out1 <- rep(NA,24)}
   names(out1) <-c("o_hm",paste0("o_q",seq(1,9,2)),"o_mean","o_sd",
-                  paste0("r2_q",seq(1,9,2)),"nucdiv","S",
-                  paste0("AF",seq(1,9,2)))
+                  paste0("ham_q",seq(1,9,2)),
+                  "nucdiv","S",
+                  paste0("AF_q",seq(1,9,1)))
   return(out1)}
-
-
 
 #' Params for time scaling and coalescent models
 coal_param <- list(c(1,10,50,100,250,500,1000,2000), #growth rates
@@ -62,7 +64,7 @@ names(prior1) <- c("K+exp","Beta","Dirac")
 
 #' Simulation parameters
 n0 <- 1000 #Check 1K sims per condition cell whether it gets correctly sorted
-mc1 <- 16
+mc1 <- 14#16
 
 
 #' Extract data parameters
@@ -108,7 +110,7 @@ prior1[[mod1]][[k]] <- cbind("model"=rep(mod_numb,n0),
                              "coal_scale"=rep(c2,n0))
 clu1 <- makeForkCluster(nnodes = mc1)
 sims1[[mod1]][[k]] <- parApply(clu1,prior1[[mod1]][[k]][,-1],1,
-                               function(x){divfun_or2af(coal_t_exp(x))})
+                               function(x){divfun_ohaf(coal_t_exp(x))})
 stopCluster(clu1)
   }}
 }

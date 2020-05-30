@@ -10,24 +10,27 @@ ham_coarse <- 9:13
 r2_coarse <- 14:18
 s_pi <- c(19,20)
 af_coarse <- 21:25
-rows_abc <- list(c(o_coarse,ham_coarse,r2_coarse,s_pi,af_coarse),
-                 c(ham_coarse),
-                 c(o_coarse,r2_coarse),
-                 c(s_pi,af_coarse),
-                 c(ham_coarse,r2_coarse,s_pi,af_coarse),
+
+
+
+rows_abc <- list(c(s_pi,af_coarse),
+                 c(o_coarse,s_pi,af_coarse),
+                 c(ham_coarse,s_pi,af_coarse),
+                 c(r2_coarse,s_pi,af_coarse),
                  c(o_coarse,r2_coarse,s_pi,af_coarse),
                  c(o_coarse,ham_coarse,s_pi,af_coarse),
                  c(o_coarse,ham_coarse,r2_coarse),
-                 c(ham_coarse,s_pi,af_coarse))
-
-
-
+                 c(ham_coarse,r2_coarse,s_pi,af_coarse),
+                 c(o_coarse,ham_coarse,r2_coarse,s_pi,af_coarse))
 #' Input vector
 stats1 <- vector("list",9)
-
+#' Which stat set is used for importance scoring?
+index_imp <- 9
 #' Names of sets of stats
-names(stats1) <- c("FULL","Ham","O, r2","AF+",
-                   "FULL - O","FULL - Ham","FULL - r2","FULL - AF+","Ham, AF+")
+names(stats1) <- c("AF+","AF+, O","AF+, Ham","AF+, r2","FULL - Ham",
+                   "FULL - r2","FULL - AF+","FULL - O","FULL")
+
+
 
 
 #' How many ABC runs per set of stats per replication

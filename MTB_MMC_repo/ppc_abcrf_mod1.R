@@ -12,16 +12,16 @@ library(psych)
 library(gap)
 library(phyclust)
 
-mc1 <- 16 #cores used for parallel computation
+mc1 <- 7 #cores used for parallel computation
 nsim_ppc <- 10000 #Number of sims for the PPC
 
 #' Observed data
-load("TB_datasets_for_ABC.RData")
+load("TB_data_ABC_data_fasta.RData")
 
 #' Seed (if wanted, used differently in the manuscript)
-#load("seeds_TB.RData")
-#seed1 <- seeds1[29*4+1]  
-#set.seed(seed1)
+load("seeds_TB.RData")
+seed1 <- seeds1[23*4+1]  
+set.seed(seed1)
 
 
 
@@ -62,11 +62,11 @@ sim_seq <- function(nsamp1,theta1,coal_param=0,model=1){
 #' Diversity stats for PPC
 divfun_check <- function(seq1){
   if (is.matrix(seq1)){
-    out1 <- c(quant_hm_oc(seq1),mean_sd_oc(seq1),r2fun(seq1),
+    out1 <- c(quant_hm_oc(seq1),mean_sd_oc(seq1),hammfun(seq1),
               f_nucdiv_S(spectrum01(seq1)),D_H(seq1)[1],allele_freqs(seq1)[-2])}
   else {out1 <- rep(NA,20)}
   names(out1) <-c("hm(O)",paste("O: qu",seq(.1,.9,.2)),"mean(O)","sd(O)",
-                  paste("r2: qu",seq(.1,.9,.2)),
+                  paste("Ham: qu",seq(.1,.9,.2)),
                   "Nucl. div.","S","Taj.'s D",
                   paste("AF: qu",seq(.1,.9,.2))[-2])
   return(out1)}
@@ -77,7 +77,7 @@ divfun_check <- function(seq1){
 
 #' Read in abc results (example: output of Rscript abcrf_tb.R 4 1)
 #' THIS HAS TO BE ADJUSTED
-abc_res <- read.table("res/abcres1_Roetzer2013.txt",header = TRUE)
+abc_res <- read.table("restable_rev.txt",header = TRUE)
 
 
   
@@ -122,7 +122,7 @@ for (i in 1:nrow(abc_res)){
 
  
 
-save(ppc_sims_fit1,target1,file="ppc_mod1.RData")
+save(ppc_sims_fit1,target1,file="ppc_mod1_rev.RData")
 
 
 

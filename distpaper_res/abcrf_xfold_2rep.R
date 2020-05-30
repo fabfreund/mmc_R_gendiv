@@ -51,7 +51,7 @@ for (j in 1:nreps){
 posvar_rvs <- 1+which(apply(stats1[[i]][,-1],2,sd)>0)
 stay_cols <- c(1,posvar_rvs)
 #' Use corrected variable importance  
-rf1 <- abcrf_imp(model1~.,data=stats1[[i]][,stay_cols],ntree=500,paral = TRUE, 
+rf1 <- abcrf_imp(model1~.,data=stats1[[i]][,stay_cols],ntree=500,paral = TRUE,ncores = 7, 
              lda=lda1)
 res_conf[[c(i,j)]] <- print(rf1)
 if (i==index_imp){res_imp[[j]] <- variableImpPlot(rf1)

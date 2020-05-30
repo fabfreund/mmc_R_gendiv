@@ -40,7 +40,7 @@ sim_seq <- function(nsamp1,theta1,coal_param=0,model=1){
 
 #' Number of clusters
 
-mc1 <- 16
+mc1 <- 15
 
 #' We produce an additional replication of simulations 
 #' Number of simulations per model class
@@ -51,10 +51,10 @@ for (i in 1:2){
 #' Switch folders since Watterson estimator for exponential growth is computed via C script that needs
 #' to be called in the right directory
 setwd("../general_scripts/")
-prior1 <- prior_obs_s(100,models=c(3),nsimul=c(0,0,nsim,0,0,0),
+prior1 <- prior_obs_s_cont(100,models=c(3),nsimul=c(0,0,nsim,0,0,0),
               ranges = list(NULL,
-                            NULL,seq(0.05,0.95,0.1),NULL,NULL,0),
-              s_obs = c(15,20,30,40,60,75))
+                            NULL,c(0,1),NULL,NULL,0),
+              s_obs = c(15,20,30,40,60,75),mc1=mc1)
 setwd("../distpaper_res/")
 
 clu1 <- makeForkCluster(nnodes = mc1)

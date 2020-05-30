@@ -3,7 +3,7 @@
 
 
 #Input: nmax sample size for which to compute E(Ln), ratefun Function of n that
-#gives the transition rates of the block counting pocess of the Lambda-n-coalescent. 
+#gives the transition rates of the block counting process of the Lambda-n-coalescent. 
 #If s > 0 it returns the
 #Watterson estimator 2*s/E(Ln) instead.
 eln_f_lambda <- function(nmax,ratefun,s=0){

@@ -36,4 +36,4 @@ Fabrizio Menardo, Sébastien Gagneux, Fabian Freund
 bioRxiv 2019.12.21.885723; doi: <doi: https://doi.org/10.1101/2019.12.21.885723>
 
 # Examples and explanations
-Please see a_short_intro_w_examples.Rmd (or its html output) for an overview of the most important functions we supply.
+Please see [a_short_intro_w_examples.Rmd](a_short_intro_w_examples.Rmd) (or its pdf output, both in this folder) for an overview of the most important functions we supply.

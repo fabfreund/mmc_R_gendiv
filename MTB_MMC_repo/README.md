@@ -4,7 +4,9 @@ R Code for performing the ABC analyses from
 
 F. Menardo, S. Gagneux and F. Freund
 
-All scripts come with at least minimal documentation within, please check before running. Several scripts should be run via 'Rscript' on the command line, details are provided within the files. Settings etc are described in detail in our preprint. 
+https://doi.org/10.1093/molbev/msaa179
+
+All scripts come with at least minimal documentation within, please check before running. Several scripts should be run via 'Rscript' on the command line, details are provided within the files. Settings etc are described in detail in the manuscript. 
 
 Subfolders
 

@@ -22,7 +22,8 @@ R scripts to simulate genetic diversity under multiple merger (and other) coales
 
 Code by F. Freund ([U. Hohenheim](http://evoplant.uni-hohenheim.de/people/freund/)) and A. Siri-Jégousse ([IIMAS, UNAM Mexico City](http://sigma.iimas.unam.mx/arno/))
 
-The repository includes sample code we used for our manuscript "Distinguishing coalescent models - which statistics matter most?", available on biorxiv <https://www.biorxiv.org/content/10.1101/679498v2>. See folder distpaper_res.
+The repository includes sample code we used for our manuscript "The impact of genetic diversity statistics on model selection between coalescents" (2020), Computational Statistics & Data Analysis, in press <https://www.sciencedirect.com/science/article/abs/pii/S0167947320301468>. 
+A preprint (differently named, essentially identical paper) is available at <https://www.biorxiv.org/content/10.1101/679498v2>. See folder distpaper_res.
 
 We thank [Bjarki Eldon (Museum für Naturkunde, Berlin)](http://page.math.tu-berlin.de/~eldon/index.html) for allowing us to share his code here for computing the expected branch lengths for Kingman's n-coalescent with exponential growth (see README in folder general_scripts). 
 
@@ -45,4 +46,9 @@ Multiple merger genealogies in outbreaks of *Mycobacterium tuberculosis*
 
 Fabrizio Menardo, Sébastien Gagneux, Fabian Freund
 
-bioRxiv 2019.12.21.885723; doi: <doi: https://doi.org/10.1101/2019.12.21.885723>
+Molecular Biology and Evolution, msaa179 (2020) 
+https://doi.org/10.1093/molbev/msaa179
+
+# Subfolder eturc_mmc/
+
+Contains the R code for the ABC analysis from the preprint "Population history of the Northern corn leaf blight fungal pathogen *Setosphaeria turcica* in Europe" from M. Vidal-Villarejo et al (soon on biorxiv). Essentially just an application of the methodology used for *Mycobacterium tuberculosis*, but without polarized SNP data. 

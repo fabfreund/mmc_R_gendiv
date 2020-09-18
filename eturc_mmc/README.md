@@ -4,8 +4,8 @@ fungal pathogen *Setosphaeria turcica* in Europe" (2020, preprint on biorxiv in 
 Subfolders
 
   * Folder input_data/: Contains the SNP data of the five largest scaffolds for the five clusters Big Clonal (in file names =red), Small Clonal (=green), French Clonal (=lightblue), Diverse (=pink) and Kenyan (=kenya)
-  * Folder res/: Contains the results of model selection and parameter estimation between/within Kingman's n-coalescent with exponential growth, Beta n-coalescents and Dirac n-coalescents. Output of script abcrf_eturc_m123.R
-  * Folder sims/: Contains the simulations used to construct the random forests for the ABC for model selection between Kingman's n-coalescent, Beta n-coalescents and Dirac n-coalescents with exponential growth (for each model). Output of script abcrf_eturc_mmcexp.R.
+  * Folder res/: Contains the results of model selection and parameter estimation between/within Kingman's n-coalescent with exponential growth, Beta n-coalescents and Dirac n-coalescents. Output of script abcrf_eturc_m123.R.
+  * Folder sims/: Empty folder, will contain the simulations used to construct the random forests for the ABC for model selection between Kingman's n-coalescent, Beta n-coalescents and Dirac n-coalescents with exponential growth (for each model) if script abcrf_eturc_mmcexp.R is run. Simulations not included due to size, but reproducable. 
   * Folder resdata/: Contains the ABC results for model selection between Kingman's n-coalescent, Beta n-coalescents and Dirac n-coalescents with exponential growth (for each model). Output of script abcrf_eturc_mmcexp.R.
 
 Files

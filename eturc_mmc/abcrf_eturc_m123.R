@@ -1,7 +1,7 @@
 #' ABC-RF on samples from different Exserohilum turcicum populations
 #' 1st argument "color" code as text string
 #' red=BC,green=SC,lightblue=FC,pink=DIV,kenya
-#' 2nd argument scaffold 1-5
+#' 2nd argument scaffold 1-18
 #' 3rd argument T,F: log prior TRUE or FALSE
 args1 <- commandArgs(TRUE) 
 
@@ -35,7 +35,7 @@ source("../distpaper_res/construct_prior.R")
 
 
 #' number of cores for parallel computation
-mc1 <- 5#10
+mc1 <- 3#10
 
 
 #' Simulation parameter for model classes for the ABC
@@ -75,30 +75,21 @@ divfun_foldf <- function(seq1){
   if (is.matrix(seq1)){
     out1 <- c(hammfun(seq1),phylolength(seq1),r2fun(seq1),
               f_nucdiv_S(spectrum01(seq1)),
-              allele_freqs(seq1))} else {
+              allele_freqs(seq1,minor=TRUE))} else {
                 out1 <- rep(NA,22)}
   names(out1) <-c(paste0("Ham_q",seq(1,9,2)),paste0("Phy_q",seq(1,9,2)),
                   paste0("r2_q",seq(1,9,2)),
                   c("pi","S"),
-                  paste0("AF",seq(1,9,2)))
+                  paste0("MAF_q",seq(1,9,2)))
   return(out1)}
 
-#for (col1 in c("red","green","pink","lightblue","kenya")){
-load(paste0("../eturc_mmc/input_data/ABCinput_",col1,"_fold_tb.RData"))  
-#for (i in 1:5){
-#i <- as.integer(args1[1])  
-#if (col1=="yellow" & i %in% 1:3){next}
-#' Build prior distribution in all model classes (including standard Kingman)
-#' model 1: Kingman+exp, 2: Beta, 3: Dirac, 6: Kingman
-setwd("../general_scripts/")
-#prior1 <- prior_obs_s_cont(n_ind = data_scaffs[[i]]$n_ind,
-#                           models=c(1,2,3),
-#                           nsimul=c(n0,n0,n0,0,0,0),
-#                      ranges = list(growthrange0,
-#                                    betarange0,diracrange0,NULL,NULL,c(0,0)),
-#                      s_obs = rep(data_scaffs[[i]]$n_mut,2),log_growth = log_arg,
-#                      include_g0 = 0.02*n0,mc1 = mc1)
 
+#' Load data
+load(paste0("../eturc_mmc/input_data/ABCinput_",col1,
+            "_18scaff.RData"))  
+
+#' Simulate
+setwd("../general_scripts/")
 
 prior1 <- prior_obs_s_cont2(n_ind = data_scaffs[[i]]$n_ind,
                             models=c(1,2,3),
@@ -110,12 +101,8 @@ prior1 <- prior_obs_s_cont2(n_ind = data_scaffs[[i]]$n_ind,
                             include_bsz=n0*0.05,
                             mc1 = mc1)
 
-
-
 prior1[,"theta_watt"] <- sapply(prior1[,"theta_watt"],log_smear)
 setwd("../eturc_mmc/")
-
-
 
 
 #' Parallelized coalescent simulations
@@ -142,8 +129,14 @@ target1 <- as.data.frame(t(divfun_foldf(data_scaffs[[i]]$seq_0_1)))
 #quantiles to be returned for posterior distribution
 quant_ret <- seq(0,1,0.025) 
 
+#cleanup
+#save.image("test.RData") #for internal testing
+gc()
+
+
 #' Parameter estimation Kingman+exp
 param1 <- coal_p[model1==1]
+param_g <- param1
 sumstat2 <- data.frame(param1,sumstat1[model1==1,])
 growth_rf <- regAbcrf(param1~.,
                       data=sumstat2,
@@ -152,6 +145,8 @@ growthfit_rf <- predict(growth_rf,target1,
                         sumstat2,paral=TRUE,ncores=mc1,
                         quantiles = quant_ret)
 
+#cleanup
+gc()
 
 #' Parameter estimation Beta
 param1 <- coal_p[model1==2]
@@ -162,16 +157,50 @@ beta_rf <- regAbcrf(param1~.,
 betafit_rf <- predict(beta_rf,target1,sumstat2,paral=TRUE,ncores=mc1,
                       quantiles = quant_ret)
 
+#cleanup
+gc()
+
 #' Parameter estimation Dirac
 param1 <- coal_p[model1==3]
 sumstat2 <- data.frame(param1,sumstat1[model1==3,])   
 dirac_rf <- regAbcrf(param1~.,
                      data=sumstat2,
-                     paral = TRUE,ncores=6)
+                     paral = TRUE,ncores=mc1)
 diracfit_rf <- predict(dirac_rf,target1,sumstat2,
-                       paral=TRUE,ncores=6,quantiles = quant_ret)
+                       paral=TRUE,ncores=mc1,quantiles = quant_ret)
+
+#Record errors
+
+#' Compute nmae without 0 values...
+compute_no0_nmae <- function(rf,param1){
+  which0 <- (param1==0)
+  estim1 <- rf$model.rf$predictions
+  #next line: should /r be within brackets? 
+  nmae_no0 <- mean(abs((estim1[!which0]-param1[!which0])/param1[!which0]))
+  mae0 <- mean(abs(estim1[which0]-param1[which0]))
+  return(c("nmae_no0"=nmae_no0,"mae0"=mae0))
+}
+
+#Make error tables
+out2 <- as.data.frame(as.list(c(
+  compute_no0_nmae(rf = growth_rf,param1 = param_g),   
+  growth_predicterror=growth_rf$model.rf$prediction.error,
+  growth_nmae_old=growth_rf$model.rf$NMAE,
+  growth_r2=growth_rf$model.rf$r.squared,
+  beta_predicterror=beta_rf$model.rf$prediction.error,
+  beta_nmae=beta_rf$model.rf$NMAE,
+  beta_r2=beta_rf$model.rf$r.squared,
+  dirac_predicterror=dirac_rf$model.rf$prediction.error,
+  dirac_nmae=dirac_rf$model.rf$NMAE,
+  dirac_r2=dirac_rf$model.rf$r.squared)))
+
+write.table(out2,file=paste0("../eturc_mmc/priorerr/err_",names(data_scaffs)[i],
+                             ".txt"),quote = FALSE,row.names = FALSE)
 
 
+#cleanup
+rm(dirac_rf,beta_rf,growth_rf)
+gc()
 
 model1 <- as.factor(model1)
 sumstat1a <- data.frame(model1,t(sims1)) 
@@ -182,9 +211,10 @@ good_cols <- !(c(FALSE,unname(unlist(good_cols))))
 
 #' ABC model selection
 rf_ms <- abcrf(model1~.,data=sumstat1a[,good_cols],paral = TRUE,ncores=mc1)
-pred_ms <- predict(rf_ms,target1[good_cols[-1]],sumstat1a[,good_cols],
+gc()
+pred_ms <- predict(rf_ms,target1[(good_cols[-1])],sumstat1a[,good_cols],
                    paral=TRUE,ncores=mc1)
-
+gc()
 #Build error output
 asmmc_error <- sum(rf_ms$model.rf$confusion.matrix["1",c("2","3")])/sum(rf_ms$model.rf$confusion.matrix["1",c("1","2","3")])
 
@@ -216,6 +246,4 @@ write.table(out1,file=paste0("../eturc_mmc/res/res_",names(data_scaffs)[i],
                              ".txt"),quote = FALSE,row.names = FALSE)} else {
 write.table(out1,file=paste0("../eturc_mmc/res2/res_",names(data_scaffs)[i],
                              ".txt"),quote = FALSE,row.names = FALSE)}
-if (col1=="red" & i==1){
-conf1 <- rf_ms$model.rf$confusion.matrix
-save(conf1,pred_ms,file = "test_red1.RData")}
+

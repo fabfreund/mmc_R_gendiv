@@ -4,23 +4,20 @@
 #' which replication (= seed set, commented out), how many cores
 #' 1st argument "color" code as text string
 #' red=BC,green=SC,lightblue=FC,pink=DIV,kenya
-#' 2nd argument scaffold 1-5
+#' 2nd argument scaffold 1-18
 args1 <- commandArgs(TRUE) 
 
 col1 <- args1[1]
 i <- as.integer(args1[2])
 log_arg <- TRUE
 
-#' Seeds for replicability
+#' Seeds for replicability - TODO check whether parallelisation causes issues
 seed1 <- 1
 set.seed(1)
 randomseeds <- sample(1:100000,20)
 set.seed(randomseeds[1])
 
-#' For setting random seeds, only partially applied
-#load("seeds_TB.RData")
-#seed1 <- seeds1[23*(rep1-1)+i]
-#set.seed(seed1)
+
 
 
 library(abcrf)
@@ -51,12 +48,8 @@ growthrange0 <- c(log(0.5),log(5000))
 betarange0 <- c(1,2)
 diracrange0 <- c(0,1)
 n0 <- 125000#80000 for the reduced set
-df_bestm <- data.frame("red"=c(1,1,1,1,1),
-                       #"green"=c(1,3,3,1,1),
-                       #"pink"=c(1,1,2,1,1),
-                       #"lightblue"=c(1,1,1,1,1),
-                       "kenya"=c(1,1,1,1,1))
-mod1 <- df_bestm[i,col1]
+
+mod1 <- 1#df_bestm[i,col1] We always compare w. exp. growth
 
 
 #beta_gran1 <- c(0,log(5000))
@@ -161,7 +154,7 @@ divfun_foldf <- function(seq1){
   if (is.matrix(seq1)){
     out1 <- c(hammfun(seq1),phylolength(seq1),r2fun(seq1),
               f_nucdiv_S(spectrum01(seq1)),
-              allele_freqs(seq1))} else {
+              allele_freqs(seq1,minor=TRUE))} else {
                 out1 <- rep(NA,22)}
   names(out1) <-c(paste0("Ham_q",seq(1,9,2)),paste0("Phy_q",seq(1,9,2)),
                   paste0("r2_q",seq(1,9,2)),
@@ -170,7 +163,7 @@ divfun_foldf <- function(seq1){
   return(out1)}
 
 
-load(paste0("../eturc_mmc/input_data/ABCinput_",col1,"_fold_tb.RData"))  
+load(paste0("../eturc_mmc/input_data/ABCinput_",col1,"_18scaff.RData"))  
 
 
 #' Get prior

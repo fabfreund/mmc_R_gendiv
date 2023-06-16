@@ -4,9 +4,11 @@
 
 
 #' Output: Quantiles 'quant_v' of allele frequencies
-allele_freqs <- function(seq1,quant_v = c(.1,.3,.5,.7,.9)){if (!any(is.na(seq1))){
+allele_freqs <- function(seq1,quant_v = c(.1,.3,.5,.7,.9),
+                         minor=FALSE){if (!any(is.na(seq1))){
   if (!(is.matrix(seq1))){as.matrix(seq1)}  
   temp1 <- colSums(seq1)/nrow(seq1)
+  if (minor){temp1 <- sapply(temp1,function(x){min(x,1-x)})}
   temp2 <- quantile(temp1,quant_v)
   names(temp2) <- paste0("AF_qu",quant_v)
   return(temp2)

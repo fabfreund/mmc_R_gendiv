@@ -39,24 +39,43 @@ hist2 <- function(sims2,target2a,main_a,main_b){
 }
 
 #' Output of ppc_abcrf_mod1.R
-load("ppc_eturc_TajD.RData")
+load("ppc_eturc_TajD_rev2.RData")
 
-names1 <- unlist(lapply(c("Small Clonal","Kenya","French Clonal",
-                          "Diverse","Big Clonal"),function(x){rep(x,5)}))
-names2 <- paste("Scaffold",rep(c(1:5),5))
-           
+
+
+give_quant <- function(pop1,err=.05){flags <- NULL
+                                 for (scaff1 in 1:5){
+                                  dat1 <- ppc_sims_fit1[[pop1]][[scaff1]]
+                                  obs1 <- target1[[pop1]][[scaff1]]
+                                  for (i in seq(along=obs1)){ 
+                  if (ecdf(dat1[i,])(obs1[i])>1-err/2 | ecdf(dat1[i,])(obs1[i])<err/2){
+                              flags <- c(flags,paste("Scaff",scaff1,names(obs1)[i],
+                                                     ecdf(dat1[i,])(obs1[i])))
+                  }
+                                  }}
+                       cat(flags,"\n")
+                                  }
                                                     
   
-pdf("ppc_eturc.pdf")
-for (i in seq(along=ppc_sims_fit1)){ 
-  hist2(ppc_sims_fit1[[i]],target1[[i]],main_a = names1[i],main_b = names2[i])
-}
+pdf("ppc_eturc_rev2.pdf")
+#for (lineage in c("green","red","lightblue","pink","kenya")){ 
+for (lineage in c("green","red","lightblue","kenya")){ 
+  pop1 <- switch(lineage,"green"="Small Clonal","kenya"="Kenya","lightblue"="French Clonal",
+                 "pink"="Diverse","red"="Big Clonal")
+  for (scaff in 1:5){
+  hist2(ppc_sims_fit1[[lineage]][[scaff]],target1[[lineage]][[scaff]],
+        main_a = pop1,main_b = paste("Scaffold",scaff))
+}}
 dev.off()
 
- 
+load("ppc_eturc_TajD_rev_mod2.RData")
 
-
-
-
-
-
+pdf("ppc_eturc_revmod2.pdf")
+for (lineage in c("green","red","lightblue")){ 
+  pop1 <- switch(lineage,"green"="Small Clonal","kenya"="Kenya","lightblue"="French Clonal",
+                 "pink"="Diverse","red"="Big Clonal")
+  for (scaff in 1:5){
+    hist2(ppc_sims_fit1[[lineage]][[scaff]],target1[[lineage]][[scaff]],
+          main_a = pop1,main_b = paste("Scaffold",scaff))
+  }}
+dev.off()
